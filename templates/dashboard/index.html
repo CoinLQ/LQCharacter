@@ -1,0 +1,42 @@
+{% extends "app_base.html" %}
+
+{% block content %}
+
+<script type="text/x-template" id="splitgraph-template">
+  <image xlink:href={pic} x="0" y="0" height="501px" width="1000px"/>
+  <g>
+    <rect
+      v-for="(stat, index) in stats"
+      x="stat.x"
+      y="stat.y"
+      width="stat.width"
+      height="stat.height"
+      stroke="red" fill="transparent" stroke-width="1">
+    </rect>
+  </g>
+</script>
+
+<div id="demo">
+  <svg width="501" height="1000">
+    <splitgraph :pic="pic"></splitgraph>
+  </svg>
+</div>
+
+
+{% endblock %}
+
+
+{% load static %}
+{% block base_foot_script %}
+<script>
+new Vue({
+  el: '#demo',
+  data: {
+    pic: 'http://ac-hsnl7zbi.clouddn.com/wlQMt4GhJs8afpwuWWvmRJoG61mJiTPmiqve6yJH.jpg',
+    stats: JSON.parse('{"1":{"id":1,"x":"800.655","y":"233.48","width":"30.2095","height":"27.537","confidence":"1.15003"},"2":{"id":2,"x":"257.743","y":"412.636","width":"30.7527","height":"28.6642","confidence":"1.11795"},"3":{"id":3,"x":"912.3","y":"267.856","width":"30.2781","height":"28.2135","confidence":"1.11422"},"4":{"id":4,"x":"144.476","y":"171.008","width":"30.1696","height":"29.38","confidence":"1.11078"},"5":{"id":5,"x":"802.867","y":"136.836","width":"28.4186","height":"29.011","confidence":"1.10051"},"6":{"id":6,"x":"761.845","y":"145.811","width":"29.6705","height":"28.298","confidence":"1.10024"},"7":{"id":7,"x":"258.402","y":"234.282","width":"29.8153","height":"28.6434","confidence":"1.09839"},"8":{"id":8,"x":"681.378","y":"76.5693","width":"30.6128","height":"31.8332","confidence":"1.09644"}}')
+  },
+  methods: {
+  }
+})
+</script>
+{% endblock %}
