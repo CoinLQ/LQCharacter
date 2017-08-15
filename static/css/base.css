@@ -1,0 +1,307 @@
+html,
+body {
+    font-family: Helvetica, 'Hiragino Sans GB', 'Microsoft Yahei', '微软雅黑', Arial, sans-serif;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    margin: 0px;
+}
+
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+dl,
+dt,
+dd,
+ul,
+ol,
+li,
+pre,
+form,
+fieldset,
+legend,
+button,
+input,
+textarea,
+th,
+td {
+    margin: 0;
+    padding: 0;
+}
+
+body,
+button,
+input,
+select,
+textarea,
+pre {
+    font: 12px/1.5 tahoma, arial, 'Hiragino Sans GB', \5FAE\8F6F\96C5\9ED1, sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+button,
+input,
+select,
+textarea {
+    font-size: 100%;
+}
+
+label,
+input,
+select {
+    vertical-align: middle;
+}
+
+address,
+cite,
+em {
+    font-style: normal;
+}
+
+fieldset,
+img {
+    border: none;
+}
+
+ul,
+ol {
+    list-style: none;
+}
+
+table {
+    border-collapse: collapse
+}
+
+sub {
+    vertical-align: text-bottom;
+}
+
+sup {
+    vertical-align: text-top;
+}
+
+small {
+    font-size: 12px;
+}
+
+legend {
+    color: #555;
+}
+
+a,
+a:visited {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+a {
+    color: #333
+}
+
+a:hover {
+    color: #06c;
+}
+
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+    background: #1D2331;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: #5F6C88;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #8998B7;
+}
+
+input[type=text],
+textarea {
+    outline: 0;
+    padding: 3px;
+}
+
+.ui-layout-west {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    top: 0px;
+    bottom: 0px;
+    z-index: 0;
+    display: block;
+    visibility: visible;
+    background-image: linear-gradient(0deg, #4a0163 0%, #24283e 100%);
+    width: 225px;
+    height: auto;
+    color: white;
+}
+
+.ui-layout-center {
+    position: absolute;
+    left: 225px;
+    right: 0px;
+    top: 0px;
+    bottom: 0px;
+    z-index: 0;
+    display: block;
+    visibility: visible;
+    color: white;
+    background: #f5f6fa;
+    height: auto;
+}
+
+.title {
+    height: 98px;
+}
+
+.logo {
+    position: relative;
+    top: 33px;
+    left: 35px;
+    background-image: url(/static/images/75E31347-270B-403D-9CD7-B155A8B50F91@2x.png);
+    width: 45px;
+    height: 45px;
+    background-size: cover
+}
+
+.title>p {
+    position: relative;
+    left: 80px;
+    width: 80px;
+    top: 0px;
+    font-size: 20px;
+    padding: 2px 2px;
+}
+
+.copyright {
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+    padding: 5px 0px 0px 34px;
+    font-size: 11px;
+    color: #8992ca;
+    line-height: 38px;
+}
+
+.lt-menu {
+    width: 225px;
+    height: auto;
+}
+
+.menu-content {
+    padding: 4px 2px;
+    padding: 20px 0px;
+}
+
+.submenu-title {
+    font-size: 10px;
+    color: #8992ca;
+    letter-spacing: 1.17px;
+    padding: 0px 41px;
+}
+
+.submenu p {
+    z-index: 2;
+    font-size: 14px;
+    color: #ffffff;
+    line-height: 38px;
+    padding: 0px 41px;
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.active {
+    background-image: linear-gradient(90deg, rgba(126, 142, 218, 0.30) 50%, rgba(255, 255, 255, 0.00) 92%);
+    width: 225px;
+    height: 38px;
+}
+
+.active>p:before {
+    content: " ";
+    position: absolute;
+    background: #02bbf1;
+    width: 3px;
+    height: 38px;
+    left: 0px;
+}
+
+.top-bar {
+    height: 45px;
+    padding: 15px 5px;
+    display: block;
+}
+
+.profile {
+    position: relative;
+    right: 0px;
+}
+
+.userpic {
+    width: 30px;
+    height: 30px;
+    border-radius: 100%;
+    position: absolute;
+    right: 90px
+}
+
+.userpic>IMG {
+    width: 30px;
+    height: 30px;
+    border-radius: 100%;
+    background: url(/static/images/4D97769B-F116-4715-99B2-38FE105634B6@2x.png) no-repeat scroll center top #000;
+    background-size: cover;
+}
+
+.username {
+    font-size: 12px;
+    line-height: 30px;
+    color: #999999;
+    position: absolute;
+    top: 0px;
+    right: 60px
+}
+
+.main {
+    background: #ffffff;
+    border-radius: 2px;
+    height: 781px;
+    margin: 0px 17px;
+    color: #797979;
+}
+
+.main-header {
+    padding: 14px 18px;
+    width: 140px;
+    line-height: 36px;
+    font-size: 16px;
+    letter-spacing: 0;
+    text-align: center;
+}
+
+.main-divide {
+    opacity: 0.33;
+    border: 1px solid #979797;
+    margin: 3px 10px;
+    height: 0px;
+}
