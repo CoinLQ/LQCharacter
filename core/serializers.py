@@ -10,9 +10,10 @@ class CutBatchOPSerializer(serializers.ModelSerializer):
             depth = 1
 
 class PageSerializer(serializers.ModelSerializer):
+    c_page = serializers.StringRelatedField(many=True)
     class Meta:
         model = Page
-        fields = ['id', 'image']
+        fields = ['id', 'image', 'c_page']
 
 
 class BatchVersionSerializer(serializers.ModelSerializer):
