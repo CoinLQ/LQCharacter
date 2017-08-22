@@ -1,3 +1,4 @@
+# -*- encoding:utf8 -*-
 """lqcharacter URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -21,6 +22,7 @@ from django.contrib import admin
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', include("core.dashboard.urls"), name='index'),
+    url(r'^api/',include("core.urls"))
 ]
 
 # urlpatterns += static(settings.MEDIA_URL, document_root=settings.·)

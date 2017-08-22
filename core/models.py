@@ -6,7 +6,8 @@ from django.db import models
 from django.db import models
 from django.contrib.auth.models import User
 import uuid
-
+from lqcharacter import settings
+import os
 #[Django API](https://docs.djangoproject.com/en/1.11/)
 #[Django中null和blank的区别](http://www.tuicool.com/articles/2ABJbmj)
 
@@ -34,16 +35,16 @@ class Page(models.Model):
     batch_version = models.ForeignKey(BatchVersion, blank=True, null=True, on_delete=models.SET_NULL)
     image = models.CharField(max_length=128, blank=True, null=True)
 
+    def get_image_url(self):
+        return os.path.join(settings.IMAGE_ROOT, self.image)
+
 class CutBatchOP(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
-    page = models.ForeignKey(Page, blank=True, null=True, on_delete=models.SET_NULL)
+    page = models.ForeignKey(Page, blank=True, null=True, on_delete=models.SET_NULL, related_name="c_page")
     cut_data = models.TextField(blank=True,null=True)
-    '''x = models.SmallIntegerField(u'左上x')
-    y = models.SmallIntegerField(u'左上y')
-    width = models.SmallIntegerField(u'宽度')
-    height = models.SmallIntegerField(u'高度')
-    op = models.SmallIntegerField(u'操作标志')
-    confidence = models.FloatField(blank=True, null=True)'''
     submit_date = models.DateTimeField(null=True, blank=True, verbose_name=u'提交日期', auto_now = True)
+
+    def __unicode__(self):
+        return '%s: %s' % (self.id, self.cut_data)
 

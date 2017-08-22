@@ -3,16 +3,37 @@ from rest_framework import viewsets
 from serializers import BatchVersionSerializer, CutBatchOPSerializer, PageSerializer
 from models import CutBatchOP,BatchVersion,Page
 import os
-import json
 from rest_framework.decorators import list_route, detail_route
 from rest_framework.response import Response
-from rest_framework.renderers import JSONRenderer
 from rest_framework.permissions import AllowAny
 import base64
+import six
+from PIL import Image
+import io
+
 
 class PageViewSet(viewsets.ModelViewSet):
     serializer_class = PageSerializer
     queryset = Page.objects.all()
+    permission_classes = (AllowAny,)
+
+    @detail_route(methods=["post"], url_path="pre_image")
+    def pre_image(self, request, pk):
+        data = request.data
+        page_id = pk
+        x = data['x']
+        y = data['y']
+        width = data['width']
+        height = data['height']
+        p = Page.objects.get(pk=page_id)
+        img_path = p.get_image_url()
+        img = Image.open(img_path)
+        image = img.crop((x,y,x+width,y+height))
+        buffer = io.BytesIO()
+        image.save(buffer, format="png")
+        img_str = base64.b64encode(buffer.getvalue())
+
+        return Response(img_str)
 
 
 class CutBatchOPViewSet(viewsets.ModelViewSet):
@@ -30,13 +51,9 @@ class CutBatchOPViewSet(viewsets.ModelViewSet):
 
 def put_json_into_db(batch_version, json_path):
     for json_file in os.listdir(json_path):
-        if json_file.split(".")[-1] == 'json':
-            json_list = []
+        if json_file.split(".")[-1] == 'base64':
             with open(json_path + '/' + json_file) as json_data:
-                data = json.load(json_data)
-                for ele in data:
-                    json_list.append(CutBatchOP(batch_version=batch_version, image=json_file, x=ele['x'], y=ele['y'], width=ele['width'], height=ele['height'], confidence=ele['confidence'], op=ele['op']))
-                CutBatchOP.objects.bulk_create(json_list)
+                CutBatchOP.objects.bulk_create()
 
 class BatchVersionViewSet(viewsets.ModelViewSet):
     serializer_class = BatchVersionSerializer
