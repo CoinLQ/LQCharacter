@@ -1,5 +1,5 @@
 # -*- encoding:utf8 -*-
-from models import CutBatchOP,BatchVersion,Page
+from .models import CutBatchOP,BatchVersion,Page
 from rest_framework import serializers
 
 class CutBatchOPSerializer(serializers.ModelSerializer):

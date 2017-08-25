@@ -1,7 +1,7 @@
 #-*- encoding=utf8 -*-
 from rest_framework import viewsets
-from serializers import BatchVersionSerializer, CutBatchOPSerializer, PageSerializer
-from models import CutBatchOP,BatchVersion,Page
+from .serializers import BatchVersionSerializer, CutBatchOPSerializer, PageSerializer
+from .models import CutBatchOP,BatchVersion,Page
 import os
 from rest_framework.decorators import list_route, detail_route
 from rest_framework.response import Response
