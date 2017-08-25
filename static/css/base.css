@@ -116,7 +116,10 @@ a {
 a:hover {
     color: #06c;
 }
-
+svg {
+    margin: 5px auto;
+    display:block;
+}
 ::-webkit-scrollbar {
     width: 5px;
     height: 5px;
@@ -304,4 +307,26 @@ textarea {
     border: 1px solid #979797;
     margin: 3px 10px;
     height: 0px;
+}
+
+#raw {
+    position: absolute;
+    top: 0;
+    left: 1000px;
+}
+
+.hidden {
+  display: none;
+}
+.rect-info {
+  display: inline-block;
+  padding: 10px;
+  min-width: 450px;
+}
+
+.operations {
+  display: inline-block;
+  position: absolute;
+  padding: 10px;
+  right: 100px;
 }
