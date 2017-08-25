@@ -10,3 +10,7 @@ pytz==2017.2
 six==1.10.0
 xadmin==0.6.1
 unipath==1.1
+django-rest-swagger==2.1.0
+pillow==3.4.2
+django-extensions==1.8.1
+django-filter==1.0.4
