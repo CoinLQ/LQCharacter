@@ -126,7 +126,7 @@ window.vv = new Vue({
     },
     addnew: function() {
       var new_id = this.stats[this.stats.length-1].id + 1;
-      var ins = {id: new_id, x: this.current.x+30, y: this.current.y+30, width: 30, height: 30, op: 0, confidence: 1, selected: false};
+      var ins = {id: new_id, x: this.current.x+30, y: this.current.y+30, width: 30, height: 30, op: 1, confidence: 1, selected: false};
       this.stats.push(ins);
       this.choice(ins);
     },
