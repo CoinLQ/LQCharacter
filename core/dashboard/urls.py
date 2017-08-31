@@ -5,5 +5,5 @@ from .views import IndexView
 
 
 urlpatterns = [
-  url(r'^', IndexView.as_view(), name='dashboard'),
+  url(r'^$', IndexView.as_view(), name='dashboard'),
 ]

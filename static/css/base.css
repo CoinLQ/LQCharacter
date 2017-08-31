@@ -103,6 +103,7 @@ legend {
 a,
 a:visited {
     text-decoration: none;
+    color: #fbf;
 }
 
 a:hover {
@@ -110,11 +111,11 @@ a:hover {
 }
 
 a {
-    color: #333
+    color: white
 }
 
 a:hover {
-    color: #06c;
+    color: #fbf;
 }
 svg {
     margin: 5px auto;
@@ -224,7 +225,7 @@ textarea {
     padding: 0px 41px;
 }
 
-.submenu p {
+.submenu a{
     z-index: 2;
     font-size: 14px;
     color: #ffffff;
@@ -240,7 +241,7 @@ textarea {
     height: 38px;
 }
 
-.active>p:before {
+.active>a:before {
     content: " ";
     position: absolute;
     background: #02bbf1;

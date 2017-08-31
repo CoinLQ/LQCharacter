@@ -5,8 +5,8 @@
 <meta charset="utf-8">
 <title>切分系统</title>
 <link rel="shortcut  icon" type="image/x-icon" href="/static/images/favicon.ico" media="screen"  />
-<link href="static/css/mini-lite.min.css" rel="stylesheet" type="text/css" />
-<link href="static/css/base.css" rel="stylesheet" type="text/css" />
+<link href="/static/css/mini-lite.min.css" rel="stylesheet" type="text/css" />
+<link href="/static/css/base.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 
@@ -20,7 +20,7 @@
 <div class="ui-layout-center">
     {% include "dashboard/includes/header.html" %}
     <div class="main">
-    <div class="main-header"><p>置信度校对{{ page_title }}</p></div>
+    <div class="main-header"><p>{{ page_title }}</p></div>
     <div class="main-divide"></div>
     {% block content %}
     {% endblock %}
@@ -28,6 +28,8 @@
 </div>
 {% load static %}
 {% get_static_prefix as STATIC_PREFIX %}
+<script src="{% static 'plugins/jquery/jquery-latest.js' %}"
+        type="text/javascript"></script>
 <script src="{% static 'plugins/vue/dist/vue.min.js' %}"
         type="text/javascript"></script>
 <script src="{% static 'plugins/vue/dist/vue-resource@1.3.4.js' %}"
@@ -38,12 +40,11 @@
         type="text/javascript"></script>
 <script src="{% static 'plugins/utils/base64.min.js' %}"
         type="text/javascript"></script>
-    {% block base_foot_script %}
-    {% endblock %}
-    {% block base_foot_page_script %}
-    {% endblock %}
-    </body>
-<script type="text/javascript">
 
-</script>
+    </body>
+
+   {% block base_foot_script %}
+
+   {% endblock %}
+
 </html>
