@@ -1,0 +1,217 @@
+{% extends "app_base.html" %}
+
+{% block content %}
+
+<!-- template for the pieces component. -->
+<script type="text/x-template" id="pieces-template">
+  <g>
+    <split-box
+      v-for="(stat, index) in stats"
+      :stat="stat"
+      :key="stat.id" :choice="choice" :movestep="movestep">
+    </split-box>
+  </g>
+</script>
+
+<!-- template for the split box component. -->
+<script type="text/x-template" id="split-box-template">
+  <rect :x="stat.x" :y="stat.y" :width="stat.width" :height="stat.height" :stroke="strokeColor" fill="transparent" stroke-width="1" @click.prevent="choice(stat)"
+    @keyup="movestep($event)" ></rect>
+</script>
+
+<!-- demo root element -->
+<div id="demo">
+  <!-- Use the component -->
+  <svg :height="height" :width="width">
+    <image :xlink:href="image_url" x="0" y="0" :height="height" :width="width" ref="page_image"/>
+    <pieces :stats="stats" :choice="choice" :movestep="movestep"></pieces>
+  </svg>
+  <!-- controls -->
+  <div class='controls'>
+      <div class='rect-info'>
+      <span>坐标: ([[current.x]], [[current.y]])</span>
+      <span>[[current.width]]</span>
+      <input type="range" v-model="current.width"  min="1" max="50" @change="onChange">
+      <span>[[current.height]]</span>
+      <input type="range" v-model="current.height" min="1" max="50">
+      </div>
+      <button @click="remove(current)" class="small primary">删除</button>
+      <button @click="addnew()" class="small primary">新增</button>
+      <div class='operations'>
+        <button class="small primary">提交</button>
+      </div>
+  </div>
+</div>
+
+
+
+{% endblock %}
+
+
+{% load static %}
+{% block base_foot_script %}
+<script>
+var page_id="{{ page_id }}";
+Vue.config.delimiters = ["[[", "]]"];
+// A resusable polygon graph component
+Vue.component('pieces', {
+  props: ['stats', 'choice', 'movestep'],
+  template: '#pieces-template',
+  components: {
+    // a sub component for the labels
+    'split-box': {
+      props:  ['stat', 'index', 'total', 'choice', 'movestep'],
+      template: '#split-box-template',
+      computed: {
+        strokeColor: function() {
+          if (this.stat.op == 3){
+            return "white"
+          } else if (this.stat.selected) {
+            return "red"
+          } else if (this.stat.op == 1){
+            return "yellow"
+          }
+          else if (this.stat.op == 0){
+            return "blue"
+          } else if (this.stat.op == 2){
+            return "green"
+          }
+        }
+      }
+    }
+  },
+  created() {
+    document.addEventListener('keydown', this.movestep)
+  },
+  beforeDestroy() {
+    document.removeEventListener('keydown', this.movestep)
+  }
+});
+
+// bootstrap the demo
+window.vv = new Vue({
+  el: '#demo',
+  delimiters: ['[[', ']]'],
+  data: {
+    newLabel: '',
+    id: 1,
+    stats: [],//,
+    api_base: "http://127.0.0.1:3000/",
+    image_url: "",
+    activeState: 0,
+    current: {},
+    width: 1,
+    height: 1
+  },
+  mounted: function() {
+    this.loadPage();
+  },
+  watch: {
+
+  },
+  methods: {
+    submit:function (){
+      var stats = _.map(_.cloneDeep(this.stats), function(m){ _.unset(m, 'selected');return m;})
+      var jsondata = Base64.encode(JSON.stringify(stats))
+      var post_data = {id: this.id, jsondata: jsondata}
+    },
+    remove: function (stat) {
+      if (this.stats.length > 3) {
+        var index = this.stats.indexOf(stat);
+        stat.op = 3;
+        Vue.set(this.stats, index, stat);
+        //this.stats.splice(this.stats.indexOf(stat), 1)
+      } else {
+        alert('Can\'t delete more!')
+      }
+    },
+    addnew: function() {
+      var new_id = this.stats[this.stats.length-1].id + 1;
+      var ins = {id: new_id, x: this.current.x+30, y: this.current.y+30, width: 30, height: 30, op: 1, confidence: 1, selected: false};
+      this.stats.push(ins);
+      this.choice(ins);
+    },
+    unselect: function () {
+      if (this.current === null) {
+        return;
+      }
+      index = this.stats.indexOf(this.current);
+      if (index == -1) {
+        return;
+      }
+      this.current.selected = false;
+      Vue.set(this.stats, index, this.current);
+    },
+    choice: function(stat) {
+      this.unselect();
+      this.current = stat
+      index = this.stats.indexOf(stat)
+      this.activeState= stat.id;
+      this.current.selected = true;
+      Vue.set(this.stats, index, this.current);
+    },
+    onChange: function() {
+      stat = this.stats.find(i => i.id === this.current.id);
+      if (stat.op !=1 ){
+        stat.op = 2;
+      }
+      Vue.set(this.stats, this.stats.indexOf(this.current), stat);
+    },
+    loadPage: function() {
+        var json_server_api = this.api_base + 'pages/' + this.id + '?pageid=1&limit=10';//json-server接口
+        var django_api = "/api/page/"+page_id+"/one";//本地接口
+        this.$http.get(django_api).then(function (response) {
+            // success callback
+            //this.image_url = response.data.image_url;
+            this.image_url = response.data.image_url;//测试数据
+            this.stats = _.map(JSON.parse(Base64.decode(response.data.jsondata)), function(item) { return _.assign({selected: false}, item);});
+            this.choice(this.stats[0]);
+            this.getImageDimension();
+        }, function(error) {
+          // error callback
+          console.log('Fail，网址或相关错误！\n错误码：' + error.status + "\n结果：" + error.ok);
+        });
+    },
+    getImageDimension: function (el, onReady) {
+
+      var image = new Image();
+      var that = this;
+      image.onload = function(){
+          that.height = image.height;
+          that.width = image.width;
+      };
+      image.src = this.image_url;
+    },
+    movestep: function(ev){
+      var current = this.current;
+      if (ev.keyCode == 37) //left
+      {
+        current.x -= 1
+      } else if (ev.keyCode == 39) //right
+      {
+        current.x += 1
+      } else if (ev.keyCode == 38) //up
+      {
+        current.y -= 1
+      } else if (ev.keyCode == 40) //down
+      {
+        current.y += 1
+      } else {
+        return
+      }
+      if (current.op !=1 ){
+        current.op = 2;
+      }
+      //bound protection
+      if (current.x < 0 || current.y < 0)
+      {
+        alert('已超出边界');
+      }else{
+        Vue.set(this.stats, index, this.current);
+      }
+    }
+
+  }
+})
+</script>
+{% endblock %}

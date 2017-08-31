@@ -32,6 +32,7 @@ class BatchVersion(models.Model, UsableStatus):
             default=UsableStatus.UNUSABLE, db_index=True)
 
 class Page(models.Model):
+
     id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
     batch_version = models.ForeignKey(BatchVersion, blank=True, null=True, on_delete=models.SET_NULL)
     image = models.CharField(max_length=128, blank=True, null=True)

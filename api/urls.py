@@ -7,7 +7,7 @@ from rest_framework_swagger.renderers import OpenAPIRenderer, SwaggerUIRenderer
 router = routers.SimpleRouter(trailing_slash=False)
 router.register(r'cutbatch', CutBatchOPViewSet)
 router.register(r'batchversion', BatchVersionViewSet)
-router.register(r'page', PageViewSet)
+router.register(r'pages', PageViewSet)
 
 
 schema_view = get_schema_view(
