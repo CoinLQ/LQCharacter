@@ -18,11 +18,13 @@ from django.conf import settings
 from django.conf.urls import url, include
 from django.conf.urls.static import static
 from django.contrib import admin
+from core.dashboard.views import detail
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^$', include("core.dashboard.urls"), name='index'),
-    url(r'^api/',include("core.urls"))
+    url(r'^/$', include("core.dashboard.urls"), name='dashboard'),
+    url(r'^(?P<page_id>[0-9A-Za-z-]+)$', detail, name='dashboard'),
+    url(r'^api/',include("api.urls")),
 ]
 
 # urlpatterns += static(settings.MEDIA_URL, document_root=settings.·)
