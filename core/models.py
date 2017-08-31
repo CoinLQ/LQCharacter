@@ -6,6 +6,7 @@ from django.db import models
 from django.db import models
 from django.contrib.auth.models import User
 import uuid
+from django.shortcuts import render
 from lqcharacter import settings
 import os
 #[Django API](https://docs.djangoproject.com/en/1.11/)
@@ -35,8 +36,14 @@ class Page(models.Model):
     batch_version = models.ForeignKey(BatchVersion, blank=True, null=True, on_delete=models.SET_NULL)
     image = models.CharField(max_length=128, blank=True, null=True)
 
+    @property
     def get_image_url(self):
-        return os.path.join(settings.IMAGE_ROOT, self.image)
+        #return os.path.join(settings.IMAGE_ROOT, self.image)
+        return "http://ac-hsnl7zbi.clouddn.com/wlQMt4GhJs8afpwuWWvmRJoG61mJiTPmiqve6yJH.jpg"
+
+    @property
+    def get_page_url(self):
+        return "http://127.0.0.1:8000/"+str(self.id)
 
 class CutBatchOP(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

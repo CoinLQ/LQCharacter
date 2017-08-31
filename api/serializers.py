@@ -1,5 +1,5 @@
 # -*- encoding:utf8 -*-
-from .models import CutBatchOP,BatchVersion,Page
+from core.models import CutBatchOP,BatchVersion,Page
 from rest_framework import serializers
 
 class CutBatchOPSerializer(serializers.ModelSerializer):
@@ -13,7 +13,7 @@ class PageSerializer(serializers.ModelSerializer):
     c_page = serializers.StringRelatedField(many=True)
     class Meta:
         model = Page
-        fields = ['id', 'image', 'c_page']
+        fields = ['id', 'image', 'c_page', 'get_page_url']
 
 
 class BatchVersionSerializer(serializers.ModelSerializer):
