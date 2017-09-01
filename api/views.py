@@ -1,15 +1,16 @@
 #-*- encoding=utf8 -*-
 from rest_framework import viewsets
-from .serializers import BatchVersionSerializer, CutBatchOPSerializer, PageSerializer
+from .serializers import BatchVersionSerializer, CutBatchOPSerializer, PageSerializer,PageNSerializer
 from core.models import CutBatchOP,BatchVersion,Page
 import os
 from rest_framework.decorators import list_route, detail_route
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 import base64
-import six
 from PIL import Image
 import io
+from rest_framework import generics
+from django.db.models import Q
 
 
 class PageViewSet(viewsets.ModelViewSet):
@@ -45,11 +46,28 @@ class PageViewSet(viewsets.ModelViewSet):
         return Response(
             {
                 "id":pk,
-                "code":page.image,
+                "code":page.image_name,
                 "image_url":page.get_image_url,
                 "jsondata":page.c_page.first().cut_data
             })
 
+
+    @detail_route(methods=['post'],  url_path='save_op')
+    def save_op(self, request, pk):
+        p = Page.objects.get(pk=pk)
+        c = p.c_page.first()
+        c.cut_data = request.data
+        c.save()
+
+        p.image.final = True
+        p.image.save()
+
+class FinalPageViewSet(generics.ListAPIView):
+    serializer_class = PageSerializer
+    permission_classes = (AllowAny,)
+
+    def get_queryset(self):
+        return Page.objects.filter(Q(image__final=True)|(Q(batch_version__accepted=2)&Q(image__final=False)))
 
 class CutBatchOPViewSet(viewsets.ModelViewSet):
     serializer_class = CutBatchOPSerializer
@@ -65,10 +83,14 @@ class CutBatchOPViewSet(viewsets.ModelViewSet):
         return Response(CutBatchOPSerializer(cut).data)
 
 def put_json_into_db(batch_version, json_path):
+    save_list = []
     for json_file in os.listdir(json_path):
         if json_file.split(".")[-1] == 'base64':
             with open(json_path + '/' + json_file) as json_data:
-                CutBatchOP.objects.bulk_create()
+                p = Page(batch_version= batch_version, image = json_file.split(".")[0])
+                c = CutBatchOP(page=p,cut_data=json_data)
+                save_list.append(c)
+    CutBatchOP.objects.bulk_create(c)
 
 class BatchVersionViewSet(viewsets.ModelViewSet):
     serializer_class = BatchVersionSerializer
@@ -81,6 +103,16 @@ class BatchVersionViewSet(viewsets.ModelViewSet):
         b.save()
         put_json_into_db(b, "/home/buddhist/AI/QIEZI")
         return Response({'status': 'ok'})
+
+    @detail_route(methods='get', url_path='switch_status')
+    def switch_status(self, request, pk):
+        batch_version = BatchVersion.objects.get(pk=pk)
+        new_status = request.data['status']
+        if new_status == 3:
+            batch_version.accepted = 3
+        if new_status == 2:
+            batch_version = 2
+        #TODO TBD
 
     '''@list_route(methods=['get'], url_path='fetch_cut_data')
         def fetch(self,request):
