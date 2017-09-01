@@ -1,11 +1,41 @@
 {% extends "app_base.html" %}
 
 {% block content %}
-
+<div id="pages-list">
+    <div v-for="(page, index) in pages">
+      <a :href="/pages/ + page.id">[[page.id]]</a>
+    </div>
+</div>
 {% endblock %}
 
 {% block base_foot_script %}
 <script type="text/javascript">
+window.vv=new Vue({
+  el: '#pages-list',
+  delimiters: ['[[', ']]'],
+  data: {
+    newLabel: '',
+    pages: [],
+    api_base: "http://127.0.0.1:8000/api/",
+    current_id: 0,
+    current: {}
+  },
+  mounted: function() {
+    this.loadPage();
+  },
+  methods: {
+    loadPage: function() {
+        var json_server_api = this.api_base + 'pages';
+        this.$http.get(json_server_api).then(function (response) {
+            this.pages = response.data.models;
+        }, function(error) {
+          // error callback
+          console.log('Fail，网址或相关错误！\n错误码：' + error.status + "\n结果：" + error.ok);
+        });
+    },
+  }
+})
+
   $(function() {
     $('.lt-menu .menu-content').first().find('.submenu').first().addClass('active');
   });
