@@ -35,7 +35,7 @@ class OPage(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=128, blank=True, null=True)
     final = models.BooleanField(default=False)
-    md5 = models.CharField(max_length=128, Index=True)
+    md5 = models.CharField(max_length=128, db_index=True)
 
 class Page(models.Model):
     id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
