@@ -31,15 +31,24 @@ class BatchVersion(models.Model, UsableStatus):
     accepted = models.PositiveSmallIntegerField(u'状态', choices=UsableStatus.STATUS,
             default=UsableStatus.UNUSABLE, db_index=True)
 
-class Page(models.Model):
+class OPage(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=128, blank=True, null=True)
+    final = models.BooleanField(default=False)
+    md5 = models.CharField(max_length=128, Index=True)
 
+class Page(models.Model):
     id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
     batch_version = models.ForeignKey(BatchVersion, blank=True, null=True, on_delete=models.SET_NULL)
-    image = models.CharField(max_length=128, blank=True, null=True)
+    image = models.ForeignKey(OPage)
+
+    @property
+    def image_name(self):
+        return self.image.name
 
     @property
     def get_image_url(self):
-        #return os.path.join(settings.IMAGE_ROOT, self.image)
+        #return os.path.join(settings.IMAGE_ROOT, self.image.name)
         return "http://ac-hsnl7zbi.clouddn.com/wlQMt4GhJs8afpwuWWvmRJoG61mJiTPmiqve6yJH.jpg"
 
     @property
@@ -55,4 +64,3 @@ class CutBatchOP(models.Model):
 
     def __unicode__(self):
         return '%s: %s' % (self.id, self.cut_data)
-
