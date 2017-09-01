@@ -159,7 +159,7 @@ window.vv = new Vue({
     },
     loadPage: function() {
         var json_server_api = this.api_base + 'pages/' + this.id + '?pageid=1&limit=10';//json-server接口
-        var django_api = "/api/page/"+page_id+"/one";//本地接口
+        var django_api = "/api/pages/"+page_id + "/one";//本地接口
         this.$http.get(django_api).then(function (response) {
             // success callback
             //this.image_url = response.data.image_url;
