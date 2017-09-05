@@ -38,7 +38,7 @@
       <button @click="remove(current)" class="small primary">删除</button>
       <button @click="addnew()" class="small primary">新增</button>
       <div class='operations'>
-        <button class="small primary">提交</button>
+        <button  @click="submit()" class="small primary">提交</button>
       </div>
   </div>
 </div>
@@ -104,7 +104,7 @@ window.vv = new Vue({
     height: 1
   },
   mounted: function() {
-    this.loadPage();
+    this.loadPage(page_id);
   },
   watch: {
 
@@ -114,6 +114,20 @@ window.vv = new Vue({
       var stats = _.map(_.cloneDeep(this.stats), function(m){ _.unset(m, 'selected');return m;})
       var jsondata = Base64.encode(JSON.stringify(stats))
       var post_data = {id: this.id, jsondata: jsondata}
+
+      var django_api = "/api/pages/"+page_id + "/save_op";//本地接口
+      var that = this;
+        this.$http.post(django_api, post_data).then(function (response) {
+            // success callback
+
+            swal({title: "随喜!", text: "成功提交一个校对!正在加载下一页", timer: 2000, showConfirmButton: true});
+          console.log(page_id)
+          that.loadNextPage(page_id);
+        }, function(error) {
+          // error callback
+          swal("稍等!", "出现一个bug!", "error")
+
+        });
     },
     remove: function (stat) {
       if (this.stats.length > 3) {
@@ -157,7 +171,7 @@ window.vv = new Vue({
       }
       Vue.set(this.stats, this.stats.indexOf(this.current), stat);
     },
-    loadPage: function() {
+    loadPage: function(page_id) {
         var json_server_api = this.api_base + 'pages/' + this.id + '?pageid=1&limit=10';//json-server接口
         var django_api = "/api/pages/"+page_id + "/one";//本地接口
         this.$http.get(django_api).then(function (response) {
@@ -167,6 +181,25 @@ window.vv = new Vue({
             this.stats = _.map(JSON.parse(Base64.decode(response.data.jsondata)), function(item) { return _.assign({selected: false}, item);});
             this.choice(this.stats[0]);
             this.getImageDimension();
+        }, function(error) {
+          // error callback
+          console.log('Fail，网址或相关错误！\n错误码：' + error.status + "\n结果：" + error.ok);
+        });
+    },
+    loadNextPage: function(p_id) {
+        var json_server_api = this.api_base + 'pages/' + this.id + '?pageid=1&limit=10';//json-server接口
+        var django_api = "/api/pages/"+p_id + "/next";//本地接口
+        var that = this;
+        this.$http.get(django_api).then(function (response) {
+            // success callback
+            //this.image_url = response.data.image_url;
+            page_id = response.data.id
+            that.image_url = response.data.image_url;//测试数据
+            that.stats = _.map(JSON.parse(Base64.decode(response.data.jsondata)), function(item) { return _.assign({selected: false}, item);});
+            that.choice(that.stats[0]);
+            that.getImageDimension();
+            window.history.pushState("", "", '/pages/'+page_id);
+            swal("随喜!", "下一页加载入成功!", "success")
         }, function(error) {
           // error callback
           console.log('Fail，网址或相关错误！\n错误码：' + error.status + "\n结果：" + error.ok);

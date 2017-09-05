@@ -20,7 +20,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 
 urlpatterns = [
-    url(r'^$', include("core.dashboard.urls"), name='dashboard'),
+    url(r'^', include("core.dashboard.urls"), name='dashboard'),
     url(r'^admin/', admin.site.urls),
     url(r'^pages/', include("core.page.urls"), name='pages'),
     url(r'^api/',include("api.urls")),

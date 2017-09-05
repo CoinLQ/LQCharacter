@@ -38,7 +38,7 @@ class OPage(models.Model):
     md5 = models.CharField(max_length=128, db_index=True)
 
 class Page(models.Model):
-    id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
+    id = models.UUIDField(primary_key=True,default=uuid.uuid4, editable=False)
     batch_version = models.ForeignKey(BatchVersion, blank=True, null=True, on_delete=models.SET_NULL)
     image = models.ForeignKey(OPage)
 
