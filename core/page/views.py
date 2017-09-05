@@ -11,4 +11,4 @@ class IndexView(TemplateView):
             return context
 
 def detail(request, page_id):
-    return render(request,"page/detail.html",{'page_id': page_id})
+    return render(request,"page/detail.html",{'page_id': page_id, 'page_title': '页面校对'})

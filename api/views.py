@@ -51,16 +51,37 @@ class PageViewSet(viewsets.ModelViewSet):
                 "jsondata":page.c_page.first().cut_data
             })
 
+    @detail_route(methods=["get"], url_path="next")
+    def get_next_page(self,request,pk):
+        pk = pk
+        page = Page.objects.exclude(pk=pk).first()
+        b64 = page.c_page.first().cut_data
+        s = base64.b64decode(b64)
+        return Response(
+            {
+                "id":page.id,
+                "code":page.image_name,
+                "image_url":page.get_image_url,
+                "jsondata":page.c_page.first().cut_data
+            })
+
 
     @detail_route(methods=['post'],  url_path='save_op')
     def save_op(self, request, pk):
-        p = Page.objects.get(pk=pk)
-        c = p.c_page.first()
-        c.cut_data = request.data
+        page = Page.objects.get(pk=pk)
+        c = page.c_page.first()
+        s = base64.b64decode(request.data['jsondata'])
+        c.cut_data = request.data['jsondata']
         c.save()
 
-        p.image.final = True
-        p.image.save()
+        page.image.final = True
+        page.image.save()
+        return Response({
+            "id":pk,
+            "code":page.image_name,
+            "image_url":page.get_image_url,
+            "jsondata":page.c_page.first().cut_data
+            })
 
 class FinalPageViewSet(generics.ListAPIView):
     serializer_class = PageSerializer
