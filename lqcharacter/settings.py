@@ -140,7 +140,7 @@ STATICFILES_FINDERS = (
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = '/www/lqhansp/media'
+MEDIA_ROOT = '/www/lqhansp/media/'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
@@ -158,7 +158,7 @@ STATIC_ROOT = '/www/lqhansp/static/'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 STATIC_URL = '/static/'
-MEDIA_ROOT = '/data/share/dzj_characters/'
+
 IMAGE_ROOT = MEDIA_ROOT+'images/'
 # Additional locations of static files
 STATICFILES_DIRS = (
