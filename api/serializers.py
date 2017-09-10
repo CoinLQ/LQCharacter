@@ -1,5 +1,5 @@
 # -*- encoding:utf8 -*-
-from core.models import CutBatchOP,BatchVersion,Page
+from core.models import CutBatchOP,BatchVersion,Page,OPage
 from rest_framework import serializers
 
 class CutBatchOPSerializer(serializers.ModelSerializer):
@@ -13,15 +13,16 @@ class PageSerializer(serializers.ModelSerializer):
     c_page = serializers.StringRelatedField(many=True)
     class Meta:
         model = Page
-        fields = ['id', 'batch_version', 'image_name', 'c_page', 'get_page_url']
-
-class PageNSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Page
-        fields = ['id', 'batch_version', 'image_name', 'get_page_url']
+        fields = ['id', 'batch_version', 'image_name', 'image_md5', 'c_page', 'get_page_url']
 
 
 class BatchVersionSerializer(serializers.ModelSerializer):
     class Meta:
         model = BatchVersion
         fields = ['id', 'des', 'organiztion', 'submit_date', 'accepted']
+
+
+class OPageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OPage
+        fields = ['id', 'name', 'final', 'md5']
