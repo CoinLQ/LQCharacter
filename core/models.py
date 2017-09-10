@@ -47,9 +47,13 @@ class Page(models.Model):
         return self.image.name
 
     @property
+    def image_md5(self):
+        return self.image.md5
+
+    @property
     def get_image_url(self):
         #return os.path.join(settings.IMAGE_ROOT, self.image.name)
-        return "http://ac-hsnl7zbi.clouddn.com/wlQMt4GhJs8afpwuWWvmRJoG61mJiTPmiqve6yJH.jpg"
+        return "http://tripitaka.oss-cn-shanghai.aliyuncs.com/lqhansp/"+self.image.name
 
     @property
     def get_page_url(self):

@@ -1,7 +1,7 @@
 #-*- encoding=utf8 -*-
 from rest_framework import viewsets
-from .serializers import BatchVersionSerializer, CutBatchOPSerializer, PageSerializer,PageNSerializer
-from core.models import CutBatchOP,BatchVersion,Page
+from .serializers import BatchVersionSerializer, CutBatchOPSerializer, PageSerializer, OPageSerializer
+from core.models import CutBatchOP,BatchVersion,Page,OPage
 import os
 from rest_framework.decorators import list_route, detail_route
 from rest_framework.response import Response
@@ -11,7 +11,10 @@ from PIL import Image
 import io
 from rest_framework import generics
 from django.db.models import Q
-
+import hashlib
+import urllib
+import re
+import oss2
 
 class PageViewSet(viewsets.ModelViewSet):
     serializer_class = PageSerializer
@@ -28,7 +31,15 @@ class PageViewSet(viewsets.ModelViewSet):
         height = data['height']
         p = Page.objects.get(pk=page_id)
         img_path = p.get_image_url()
-        img = Image.open(img_path)
+        if re.match(re.compile(
+                {r'^(?:http|ftp)s?:(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|'
+                 r'localhost|'  # localhost...
+                 r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'  # ...or ip
+                 r'(?::\d+)?'  # optional port
+                 r'(?:/?|[/?]\S+)$'}, re.IGNORECASE),img_path):
+            img = io.BytesIO(urllib.request.urlopen(img_path).read())
+        else:
+            img = Image.open(img_path)
         image = img.crop((x,y,x+width,y+height))
         buffer = io.BytesIO()
         image.save(buffer, format="png")
@@ -36,7 +47,7 @@ class PageViewSet(viewsets.ModelViewSet):
 
         return Response(img_str)
 
-    @detail_route(methods=["get"], url_path="one")
+    @detail_route(methods=["get"],url_path="one")
     def get_one_page(self,request,pk):
         pk = pk
         page = Page.objects.get(pk=pk)
@@ -104,25 +115,49 @@ class CutBatchOPViewSet(viewsets.ModelViewSet):
         return Response(CutBatchOPSerializer(cut).data)
 
 def put_json_into_db(batch_version, json_path):
-    save_list = []
+    opage_list = []
+    page_list = []
+    data_list = []
     for json_file in os.listdir(json_path):
         if json_file.split(".")[-1] == 'base64':
-            with open(json_path + '/' + json_file) as json_data:
-                p = Page(batch_version= batch_version, image = json_file.split(".")[0])
-                c = CutBatchOP(page=p,cut_data=json_data)
-                save_list.append(c)
-    CutBatchOP.objects.bulk_create(c)
+            with open(json_path + json_file) as json_data:
+                opage = OPage(name = json_file.split(".")[0]+".jpg", md5="")
+                p = Page(batch_version= batch_version, image = opage)
+                c = CutBatchOP(page=p,cut_data=json_data.read())
+                opage_list.append(opage)
+                page_list.append(p)
+                data_list.append(c)
+    OPage.objects.bulk_create(opage_list)
+    Page.objects.bulk_create(page_list)
+    CutBatchOP.objects.bulk_create(data_list)
+
+def UploadImage(local_path):
+    auth = oss2.Auth(os.environ.get('OSS_API_KEY'), os.environ.get('OSS_API_SECRET'))
+    bucket = oss2.Bucket(auth, 'oss-cn-shanghai.aliyuncs.com', 'tripitaka')
+    filelist = os.listdir(local_path)
+    for file_ele in filelist:
+        if file_ele.split(".")[-1] == 'jpg':
+            bucket.put_object_from_file('lqhansp/' + file_ele, local_path + file_ele)
+
+local_path = '/data/share/dzj_characters/images/'
+
+
+def compare_file(filea, fileb):
+    return hashlib.md5(base64.b64encode(open(filea,'rb').read())).digest() == hashlib.md5(base64.b64encode(open(fileb,'rb').read())).digest()
 
 class BatchVersionViewSet(viewsets.ModelViewSet):
     serializer_class = BatchVersionSerializer
     queryset = BatchVersion.objects.all()
+    permission_classes = (AllowAny,)
 
     @list_route(methods=['get'], url_path='bulkcreate')
     def batch_import(self, request):
-        os.system("ruby /home/buddhist/AI/QIEZI/process.rb /home/buddhist/AI/QIEZI/")
+        os.system("ruby /home/buddhist/AI/QIEZI/process.rb " + local_path)
         b = BatchVersion(des="batch_v_1", organiztion='lqs')
         b.save()
-        put_json_into_db(b, "/home/buddhist/AI/QIEZI")
+        put_json_into_db(b, local_path)
+        UploadImage(local_path)
+        #put_json_into_db(b, "/home/buddhist/AI/QIEZI")
         return Response({'status': 'ok'})
 
     @detail_route(methods='get', url_path='switch_status')
@@ -135,58 +170,8 @@ class BatchVersionViewSet(viewsets.ModelViewSet):
             batch_version = 2
         #TODO TBD
 
-    '''@list_route(methods=['get'], url_path='fetch_cut_data')
-        def fetch(self,request):
-            image_name = request.query_params['image']
-            cut_datas = CutBatchOPSerializer(CutBatchOP.objects.filter(page__image=image_name),many=True)
-            return Response(JSONRenderer().render(cut_datas.data))
 
-        @list_route(methods=['get'], url_path='fetch_cut_64')
-        def fetch_64(self, request):
-            image_name = request.query_params['image']
-            cut_datas = CutBatchOPSerializer(CutBatchOP.objects.filter(image=image_name), many=True)
-            cut_64 = base64.b64encode(JSONRenderer().render(cut_datas.data))
-            return Response(cut_64)'''
-    '''@list_route(methods=['post'], url_path='up_result')
-    def up_64(self,request):
-        up_datas = json.loads(base64.b64decode(request.data))
-        info_cut = ""
-        for d in up_datas:
-            op = d['op']
-            add_flag = False
-            if op == 0:
-                if not add_flag:
-                    info_cut = CutBatchOP.objects.get(pk=d['id'])
-                pass
-            elif op == 1:
-                c = CutBatchOP.objects.get(pk=d['id'])
-                c.x = d['x']
-                c.y = d['y']
-                c.width = d['width']
-                c.height = d['height']
-                c.op = 1
-                #c.user = request.user
-                # TODO 取消注释
-            elif op == 2:
-                c = CutBatchOP.objects.get(pk=d['id'])
-                if c.op == 3:
-                    c.delete()
-                else:
-                    c.op = 2
-                    c.save()
-                # TODO 新增后修改再删除如何处理？
-            elif op == 3:
-                c = CutBatchOP(
-                        batch_version=info_cut.batch_version,
-                        image=info_cut.image,
-                        x=d['x'],
-                        y=d['y'],
-                        width=d['width'],
-                        height=d['height'],
-                        confidence=1,
-                        op=3)
-                # TODO 增加user
-                c.save()
-        #TODO 准备测试数据
-        return Response({"status":"ok"})
-    '''
+class OPageViewSet(viewsets.ModelViewSet):
+    serializer_class = OPageSerializer
+    queryset = OPage.objects.all()
+
