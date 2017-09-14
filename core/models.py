@@ -23,11 +23,26 @@ class UsableStatus(object):
         (DELETED, u'删除'),
     )
 
-class BatchVersion(models.Model, UsableStatus):
+class ORGGroup(object):
+    ALI = 0
+    BAIDU = 1
+    SKY = 2
+    IDS = (
+        (ALI, u'阿里'),
+        (BAIDU, u'百度'),
+        (SKY, u'社科院'),
+    )
+
+class BatchVersion(models.Model, UsableStatus, ORGGroup):
+    class Meta:
+        verbose_name='版本批次'
+        verbose_name_plural = u"版本批次管理"
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    des = models.TextField(verbose_name=u'描述',null=True, blank=True)
-    organiztion = models.CharField(null=True, blank=True, verbose_name=u'组织名称', max_length=128)
+    organiztion = models.PositiveSmallIntegerField(verbose_name=u'组织名称', choices=ORGGroup.IDS,
+            default=ORGGroup.ALI)
     submit_date = models.DateTimeField(null=True, blank=True, verbose_name=u'提交日期', auto_now_add = True)
+    des = models.TextField(verbose_name=u'描述',null=True, blank=True, max_length= 128)
     accepted = models.PositiveSmallIntegerField(u'状态', choices=UsableStatus.STATUS,
             default=UsableStatus.UNUSABLE, db_index=True)
 
@@ -41,6 +56,10 @@ class Page(models.Model):
     id = models.UUIDField(primary_key=True,default=uuid.uuid4, editable=False)
     batch_version = models.ForeignKey(BatchVersion, blank=True, null=True, on_delete=models.SET_NULL)
     image = models.ForeignKey(OPage)
+
+    class Meta:
+        verbose_name='页'
+        verbose_name_plural = u"页面管理"
 
     @property
     def image_name(self):
