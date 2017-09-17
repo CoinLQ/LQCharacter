@@ -9,6 +9,7 @@ import uuid
 from django.shortcuts import render
 from lqcharacter import settings
 import os
+from oss import get_oss_by_name
 #[Django API](https://docs.djangoproject.com/en/1.11/)
 #[Django中null和blank的区别](http://www.tuicool.com/articles/2ABJbmj)
 
@@ -45,6 +46,9 @@ class BatchVersion(models.Model, UsableStatus, ORGGroup):
     des = models.TextField(verbose_name=u'描述',null=True, blank=True, max_length= 128)
     accepted = models.PositiveSmallIntegerField(u'状态', choices=UsableStatus.STATUS,
             default=UsableStatus.UNUSABLE, db_index=True)
+    upload_field = models.FileField(upload_to="", verbose_name="zip文件")
+    def __unicode__(self):
+        return '%s: %s' % (self.organiztion, self.submit_date)
 
 class OPage(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -56,6 +60,7 @@ class Page(models.Model):
     id = models.UUIDField(primary_key=True,default=uuid.uuid4, editable=False)
     batch_version = models.ForeignKey(BatchVersion, blank=True, null=True, on_delete=models.SET_NULL)
     image = models.ForeignKey(OPage)
+    final = models.SmallIntegerField(verbose_name='校对情况',default=0)
 
     class Meta:
         verbose_name='页'
@@ -72,11 +77,14 @@ class Page(models.Model):
     @property
     def get_image_url(self):
         #return os.path.join(settings.IMAGE_ROOT, self.image.name)
-        return "http://tripitaka.oss-cn-shanghai.aliyuncs.com/lqhansp/"+self.image.name
+        return "http://tripitaka.oss-cn-shanghai.aliyuncs.com/"+get_oss_by_name(self.image.name)
 
     @property
     def get_page_url(self):
         return "http://127.0.0.1:8000/"+str(self.id)
+
+    def __unicode__(self):
+        return self.image_name
 
 class CutBatchOP(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
