@@ -76,7 +76,11 @@ class PageViewSet(viewsets.ModelViewSet):
         s = base64.b64decode(request.data['jsondata'])
         c.cut_data = request.data['jsondata']
         c.save()
-
+        if page.final == 0:
+            page.final = 1
+        elif page.final == 1:
+            page.final = 2
+        page.save()
         page.image.final = True
         page.image.save()
         return Response({
@@ -86,12 +90,12 @@ class PageViewSet(viewsets.ModelViewSet):
             "jsondata":page.c_page.first().cut_data
             })
 
-class FinalPageViewSet(generics.ListAPIView):
-    serializer_class = PageSerializer
-    permission_classes = (AllowAny,)
+    @detail_route(methods=['get'], url_path='get_final')
+    def get_final(self):
+        return Page.objects.filter(final__gt=0)
 
-    def get_queryset(self):
-        return Page.objects.filter(Q(image__final=True)|(Q(batch_version__accepted=2)&Q(image__final=False)))
+
+
 
 class CutBatchOPViewSet(viewsets.ModelViewSet):
     serializer_class = CutBatchOPSerializer

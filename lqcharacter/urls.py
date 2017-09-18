@@ -31,6 +31,7 @@ urlpatterns = [
     url(r'^xadmin/', xadmin.site.urls),
     url(r'^pages/', include("core.page.urls"), name='pages'),
     url(r'^api/',include("api.urls")),
+    url(r'^testapi/',include("test_api.urls")),
 ]
 
 # urlpatterns += static(settings.MEDIA_URL, document_root=settings.·)
