@@ -1,5 +1,5 @@
 from rest_framework import routers
-from .views import CutBatchOPViewSet, BatchVersionViewSet, PageViewSet, FinalPageViewSet
+from .views import CutBatchOPViewSet, BatchVersionViewSet, PageViewSet
 from django.conf.urls import url, include
 from rest_framework.schemas import get_schema_view
 from rest_framework_swagger.renderers import OpenAPIRenderer, SwaggerUIRenderer
@@ -17,5 +17,5 @@ schema_view = get_schema_view(
 urlpatterns = [
     url(r'^', include(router.urls)),
     url(r'^swagger/$', schema_view),
-    url('^finalpage$', FinalPageViewSet.as_view()),
+
 ]

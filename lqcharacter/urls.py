@@ -33,6 +33,7 @@ urlpatterns = [
     url(r'^api/',include("api.urls")),
     url(r'^accounts/', include('registration.backends.simple.urls')),
     url(r'^i18n/', include('django.conf.urls.i18n')),
+    url(r'^testapi/',include("test_api.urls")),
 ]
 
 # urlpatterns += static(settings.MEDIA_URL, document_root=settings.·)
