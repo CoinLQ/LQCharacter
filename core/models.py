@@ -58,7 +58,7 @@ class OPage(models.Model):
 
 class Page(models.Model):
     id = models.UUIDField(primary_key=True,default=uuid.uuid4, editable=False)
-    batch_version = models.ForeignKey(BatchVersion, blank=True, null=True, on_delete=models.SET_NULL)
+    batch_version = models.ForeignKey(BatchVersion, blank=True, null=True, on_delete=models.CASCADE, related_name="page_batchversion")
     image = models.ForeignKey(OPage)
     final = models.SmallIntegerField(verbose_name='校对情况',default=0)
 
@@ -89,7 +89,7 @@ class Page(models.Model):
 class CutBatchOP(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
-    page = models.ForeignKey(Page, blank=True, null=True, on_delete=models.SET_NULL, related_name="c_page")
+    page = models.ForeignKey(Page, blank=True, null=True, on_delete=models.CASCADE, related_name="c_page")
     cut_data = models.TextField(blank=True,null=True)
     submit_date = models.DateTimeField(null=True, blank=True, verbose_name=u'提交日期', auto_now = True)
 
