@@ -1,4 +1,3 @@
-# -*- encoding:utf8 -*-
 from core.models import CutBatchOP,BatchVersion,Page,OPage
 from rest_framework import serializers
 

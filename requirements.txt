@@ -17,3 +17,6 @@ django-extensions==1.8.1
 django-filter==1.0.4
 boto3==1.4.7
 oss2==2.3.3
+#django_sendmail_backend==0.1.2
+django-registration==2.2
+

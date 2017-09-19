@@ -1,4 +1,3 @@
-#-*- encoding=utf8 -*-
 from rest_framework import viewsets
 from .serializers import BatchVersionSerializer, CutBatchOPSerializer, PageSerializer, OPageSerializer
 from core.models import CutBatchOP,BatchVersion,Page,OPage

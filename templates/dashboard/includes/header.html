@@ -1,5 +1,26 @@
+{% load i18n %}
+
+
 <div class="top-bar">
-    <div class="profile"><div class="userpic"><IMG></IMG></div><div class="username">贤二</div></div>
+    <div class="profile"><div class="userpic"><IMG></IMG><div class="username">{{ request.user.username.title }}
+      <div class="top-cmd">
+<ul class="nav nav-tabs">
+        <li class="dropdown">
+          <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="true">
+            M<span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a href="#">Action</a></li>
+            <li class="divider"></li>
+            <li><a href="/logout">{% block title %}{% trans "Logout" %}{% endblock %}</a></li>
+          </ul>
+        </li>
+    </ul>
+      </div>
+</div>
+
+
+    </div></div>
     <div class="dropdown-btn">
     </div>
 </div>
