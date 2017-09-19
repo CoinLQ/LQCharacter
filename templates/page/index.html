@@ -2,8 +2,16 @@
 
 {% block content %}
 <div id="pages-list">
-    <div v-for="(page, index) in pages">
-      <a :href="/pages/ + page.id">[[page.id]]</a>
+    <div v-for="(page, index) in pages" style="display: inline-block;width: 30%; margin-left:1%">
+      <div class="panel panel-info">
+        <div class="panel-heading">
+          <h3 class="panel-title">待校对面</h3>
+        </div>
+        <div class="panel-body">
+          <a :href="/pages/ + page.id">[[page.id]]</a>
+        </div>
+      </div>
+
     </div>
 </div>
 {% endblock %}

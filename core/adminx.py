@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from __future__ import absolute_import
 from django.utils.translation import ugettext as _
 import xadmin
@@ -12,7 +13,6 @@ from datetime import date
 import oss2
 import os,zipfile,base64,math,json
 from oss import get_oss_by_name
-from lqcharacter.settings import UPLOAD
 
 
 @xadmin.sites.register(views.website.IndexView)

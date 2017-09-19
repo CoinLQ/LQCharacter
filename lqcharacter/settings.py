@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Django settings for lqcharacter project.
 
@@ -11,6 +12,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+from django.core.urlresolvers import reverse_lazy
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 # BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -28,11 +30,13 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*', ]
 
-
+SITE_ID = 1
 # Application definition
 
 INSTALLED_APPS = [
+    'django.contrib.sites',
     'django.contrib.admin',
+    'registration',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -50,6 +54,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -128,12 +133,17 @@ LANGUAGE_CODE = 'zh-Hans'  # 'en-us'
 
 LANGUAGES = (
     ('en', 'English'),
-    ('zh-hans', 'Chinese'),
+    ('zh-hans', ('中文简体')),
+    ('zh-hant', ('中文繁體')),
+)
+
+LOCALE_PATHS = (
+    os.path.join(BASE_DIR, 'locale'),
 )
 
 USE_I18N = True
 
-USE_L10N = True
+USE_L10N = False
 
 USE_TZ = True
 
@@ -187,7 +197,8 @@ REST_FRAMEWORK = {
     ),
     "DEFAULT_PERMISSION_CLASSES": (
         "rest_framework.permissions.IsAuthenticated",
-        # 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
+        #'rest_framework.permissions.AllowAny',
+        #'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
 
     ),
     "DEFAULT_AUTHENTICATION_CLASSES": (
@@ -231,4 +242,13 @@ LOGGING = {
         # }
     }
 }
+
+ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window; you may, of course, use a different value.
+REGISTRATION_AUTO_LOGIN = True # Automatically log the user in.
+REGISTRATION_OPEN = True
+SIMPLE_BACKEND_REDIRECT_URL = '/'
+
+LOGIN_REDIRECT_URL=reverse_lazy('dashboard')
+LOGIN_URL=reverse_lazy('auth_login')
+LOGOUT_URL=reverse_lazy('auth_logout')
 
