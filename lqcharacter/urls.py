@@ -1,4 +1,4 @@
-# -*- encoding:utf8 -*-
+# -*- coding: utf-8 -*-
 """lqcharacter URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -31,7 +31,8 @@ urlpatterns = [
     url(r'^xadmin/', xadmin.site.urls),
     url(r'^pages/', include("core.page.urls"), name='pages'),
     url(r'^api/',include("api.urls")),
-    url(r'^testapi/',include("test_api.urls")),
+    url(r'^accounts/', include('registration.backends.simple.urls')),
+    url(r'^i18n/', include('django.conf.urls.i18n')),
 ]
 
 # urlpatterns += static(settings.MEDIA_URL, document_root=settings.·)

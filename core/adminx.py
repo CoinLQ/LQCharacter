@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from __future__ import absolute_import
 from django.utils.translation import ugettext as _
 import xadmin
@@ -12,6 +13,7 @@ from datetime import date
 import oss2
 import os,zipfile,base64,math,json
 from oss import get_oss_by_name
+
 import hashlib
 from lqcharacter.settings import MEDIA_ROOT
 from django.core.files.storage import default_storage
