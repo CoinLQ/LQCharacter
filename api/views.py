@@ -9,17 +9,18 @@ from rest_framework.permissions import AllowAny
 import base64
 from PIL import Image
 import io
-from rest_framework import generics
 from django.db.models import Q
-import hashlib
 import urllib
-import re
 
 
 class PageViewSet(viewsets.ModelViewSet):
     serializer_class = PageSerializer
     queryset = Page.objects.all()
     permission_classes = (AllowAny,)
+
+    def page_tobe_verify(self, request):
+        batch_version = request.query_params['bvid']
+        return Page.objects.filter(Q(image_final=0) & Q(batch_version=batch_version))
 
     @detail_route(methods=["post"], url_path="pre_image")
     def pre_image(self, request, pk):
@@ -91,8 +92,9 @@ class PageViewSet(viewsets.ModelViewSet):
             })
 
     @detail_route(methods=['get'], url_path='get_final')
-    def get_final(self):
-        return Page.objects.filter(final__gt=0)
+    def get_final(self, request):
+        batch_version = request.query_params['bvid']
+        return Page.objects.filter(Q(final__gt=0)&Q(batch_version=batch_version))
 
 
 
@@ -126,8 +128,6 @@ class CutBatchOPViewSet(viewsets.ModelViewSet):
         cut.page.image.save()
         return Response(CutBatchOPSerializer(cut).data)
 
-def compare_file(filea, fileb):
-    return hashlib.md5(base64.b64encode(open(filea,'rb').read())).digest() == hashlib.md5(base64.b64encode(open(fileb,'rb').read())).digest()
 
 class BatchVersionViewSet(viewsets.ModelViewSet):
     serializer_class = BatchVersionSerializer

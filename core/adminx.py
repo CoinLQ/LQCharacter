@@ -14,6 +14,7 @@ import os,zipfile,base64,math,json
 from oss import get_oss_by_name
 import hashlib
 from lqcharacter.settings import MEDIA_ROOT
+from django.core.files.storage import default_storage
 
 @xadmin.sites.register(views.website.IndexView)
 class MainDashboard(object):
@@ -65,8 +66,11 @@ def put_zip_into_db(batch_version, zip_path):
     data_list = []
     zfile = zipfile.ZipFile(zip_path, 'r')
     # TODO 要和用户约定上传文件格式
-    for i in zfile.namelist()[1:]:
-        name = i.split('.')
+    for i in zfile.namelist():
+        if i.index(".")>-1:
+            name = i.split('.')
+        else:
+            continue
         img_name = name[0].split("/")[-1]
         if is_img_exist(img_name+".jpg"):
             if name[-1] == 'txt':
@@ -115,10 +119,6 @@ class BatchVersionModelForm(forms.ModelForm):
     now_date = forms.DateField(label='日期', initial=date.today, disabled=True)
     upload_field = forms.FileField(required=False, label='ZIP文件', max_length=128, widget=forms.FileInput(attrs={'accept':'application/zip'}))
 
-    def delete(self):
-        b = self.instance
-        b.delete()
-
     def create(self, commit=True):
         pass
 
@@ -134,18 +134,21 @@ class BatchVersionModelForm(forms.ModelForm):
         #b = BV(organiztion=upload_field.name.split("_")[0],des=self.data['des'])
         b = self.instance
         b.organiztion = self.data['organiztion']
-        b.des = self.data['organiztion']
+        b.des = self.data['des']
         b.save()
         if existed:
             pass
         else:
+            with default_storage.open(upload_field.name, 'wb+') as destination:
+                for chunk in upload_field.chunks():
+                    destination.write(chunk)
             zip_up = put_zip_into_db(b, upload_field)
         #TODO 与贤颠法师确认如何生成BatchVersion
         # ...do something with upload_field here...
         return super(BatchVersionModelForm, self).save(commit=commit)
 
     class Meta:
-        fields = ('organiztion', 'now_date', 'upload_field', 'des')
+        fields = ('organiztion', 'now_date', 'upload_field', 'des', 'accepted')
         model = BV
 
 
@@ -155,7 +158,7 @@ class BatchVersion(object):
 
     fieldsets = (
         (None, {
-            'fields': ('organiztion', 'now_date', 'upload_field', 'des'),
+            'fields': ('organiztion', 'now_date', 'upload_field', 'des', 'accepted'),
         }),
     )
     pass

@@ -153,12 +153,14 @@ MEDIA_ROOT = '/www/lqhansp/media/'
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
 MEDIA_URL = '/media/'
+UPLOAD = MEDIA_ROOT+'upload/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
 STATIC_ROOT = '/www/lqhansp/static/'
+#STATIC_ROOT = '/home/buddhist/AI/LQCharacter/static/'
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -186,8 +188,9 @@ REST_FRAMEWORK = {
         "rest_framework.parsers.JSONParser",
     ),
     "DEFAULT_PERMISSION_CLASSES": (
-        "rest_framework.permissions.IsAuthenticated",
-        # 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
+        #"rest_framework.permissions.IsAuthenticated",
+        "rest_framework.permissions.AllowAny",
+        #'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
 
     ),
     "DEFAULT_AUTHENTICATION_CLASSES": (
