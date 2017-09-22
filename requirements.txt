@@ -19,4 +19,6 @@ boto3==1.4.7
 oss2==2.3.3
 #django_sendmail_backend==0.1.2
 django-registration==2.2
-
+#pip install https://github.com/sshwsfc/xadmin/archive/master.zip
+#pip install https://github.com/CoinLQ/django-fagungis/archive/master.zip
+#Fabric3==1.13.1.post1
