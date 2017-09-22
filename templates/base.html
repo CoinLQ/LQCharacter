@@ -9,24 +9,26 @@
 </head>
 <body>
 
-<div class="ui-layout-west">
-    <div class="title">
-        <div class="logo"></div><p>切分系统</p>
-        {% include "dashboard/includes/custom_menu.html" %}
-        <div class="copyright">©2017 LQS All Rights Reserved.</div>
-    </div>
-</div>
-<div class="ui-layout-center">
-    {% include "dashboard/includes/header.html" %}
-    <div class="main">
+
+<div class="row">
+    <div class="col-sm-6 col-sm-offset-3">
+        <div class="title">
+            <div class="logo"></div>
+            <p style="width: 300px">切分系统</p>
+        </div>
+        <div class="main">
     <div class="main-header"><p>{{ page_title }}
     {% block title %}
     {% endblock %}</p></div>
     <div class="main-divide"></div>
+
     {% block content %}
     {% endblock %}
     </div>
+
+    </div>
 </div>
+
 {% load static %}
 {% get_static_prefix as STATIC_PREFIX %}
 <script src="{% static 'plugins/jquery/jquery-latest.js' %}"
@@ -40,8 +42,6 @@
 <script src="{% static 'plugins/sweetalert/dist/sweetalert.min.js' %}"
         type="text/javascript"></script>
 <script src="{% static 'plugins/utils/base64.min.js' %}"
-        type="text/javascript"></script>
-<script src="{% static 'css/yeti/bootstrap.min.js' %}"
         type="text/javascript"></script>
 
     </body>
