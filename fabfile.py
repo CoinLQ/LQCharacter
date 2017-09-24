@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from os.path import join
 from fabric.api import env, task
-# from fagungis.tasks import *
+from fagungis.tasks import *
 
 
 @task
