@@ -2,6 +2,7 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
 
+
 class IndexView(TemplateView):
     template_name = "page/index.html"
 
@@ -10,5 +11,6 @@ class IndexView(TemplateView):
             context['page_title'] = u'页面列表'
             return context
 
+
 def detail(request, page_id):
-    return render(request,"page/detail.html",{'page_id': page_id, 'page_title': '页面校对'})
+    return render(request, "page/detail.html", {'page_id': page_id, 'page_title': '页面校对'})

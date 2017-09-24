@@ -176,7 +176,7 @@ STATIC_ROOT = '/www/lqhansp/static/'
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 STATIC_URL = '/static/'
 
-IMAGE_ROOT = MEDIA_ROOT+'images/'
+IMAGE_ROOT = MEDIA_ROOT + 'images/'
 # Additional locations of static files
 STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
@@ -197,8 +197,7 @@ REST_FRAMEWORK = {
     ),
     "DEFAULT_PERMISSION_CLASSES": (
         "rest_framework.permissions.IsAuthenticated",
-        #'rest_framework.permissions.AllowAny',
-        #'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
+        # 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
 
     ),
     "DEFAULT_AUTHENTICATION_CLASSES": (
@@ -243,12 +242,11 @@ LOGGING = {
     }
 }
 
-ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window; you may, of course, use a different value.
-REGISTRATION_AUTO_LOGIN = True # Automatically log the user in.
+ACCOUNT_ACTIVATION_DAYS = 7  # One-week activation window; you may, of course, use a different value.
+REGISTRATION_AUTO_LOGIN = True  # Automatically log the user in.
 REGISTRATION_OPEN = True
 SIMPLE_BACKEND_REDIRECT_URL = '/'
 
-LOGIN_REDIRECT_URL=reverse_lazy('dashboard')
-LOGIN_URL=reverse_lazy('auth_login')
-LOGOUT_URL=reverse_lazy('auth_logout')
-
+LOGIN_REDIRECT_URL = reverse_lazy('dashboard')
+LOGIN_URL = reverse_lazy('auth_login')
+LOGOUT_URL = reverse_lazy('auth_logout')

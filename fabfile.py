@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from os.path import join
 from fabric.api import env, task
-from fagungis.tasks import *
+# from fagungis.tasks import *
 
 
 @task
@@ -41,7 +41,7 @@ def LQCharacter():
     env.django_media_root = env.django_media_path
     #  django static url and root dir
     env.django_static_url = '/static/'
-    #env.django_static_root = env.code_root
+    # env.django_static_root = env.code_root
     env.django_static_root = env.django_static_path
     #  do you use south in your django project?
     env.south_used = True
@@ -56,7 +56,7 @@ def LQCharacter():
     #  always ask user for confirmation when run any tasks
     env.ask_confirmation = False
 
-    ### START gunicorn settings ###
+    #   START gunicorn settings ###
     #  be sure to not have anything running on that port
     env.gunicorn_bind = "127.0.0.1:8100"
     env.gunicorn_logfile = '%(django_user_home)s/logs/projects/%(project)s_gunicorn.log' % env
@@ -64,9 +64,9 @@ def LQCharacter():
     env.gunicorn_workers = 2
     env.gunicorn_worker_class = "eventlet"
     env.gunicorn_loglevel = "info"
-    ### END gunicorn settings ###
+    #   END gunicorn settings ###
 
-    ### START nginx settings ###
+    #   START nginx settings ###
     env.nginx_server_name = 'lqcharacter.dzj3000.com'  # Only domain name, without 'www' or 'http://'
     env.nginx_conf_file = '%(django_user_home)s/configs/nginx/%(project)s.conf' % env
     env.nginx_client_max_body_size = 10  # Maximum accepted body size of client request, in MB
@@ -74,9 +74,9 @@ def LQCharacter():
     # will configure nginx with ssl on, your certificate must be installed
     # more info here: http://wiki.nginx.org/HttpSslModule
     env.nginx_https = False
-    ### END nginx settings ###
+    #   END nginx settings ###
 
-    ### START supervisor settings ###
+    #   START supervisor settings ###
     # http://supervisord.org/configuration.html#program-x-section-settings
     # default: env.project
     env.supervisor_program_name = env.project
@@ -86,5 +86,5 @@ def LQCharacter():
     env.supervisor_redirect_stderr = 'true'  # true or false
     env.supervisor_stdout_logfile = '%(django_user_home)s/logs/projects/supervisord_%(project)s.log' % env
     env.supervisord_conf_file = '%(django_user_home)s/configs/supervisord/%(project)s.conf' % env
-    ### END supervisor settings ###
+    #  END supervisor settings ###
     env.supervisor_celery_worker_name = 'celery'
