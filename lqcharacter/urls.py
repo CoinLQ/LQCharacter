@@ -14,13 +14,10 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf import settings
 from django.conf.urls import url, include
-from django.conf.urls.static import static
-from django.contrib import admin
 import xadmin
 
-xadmin.autodiscover()
+# xadmin.autodiscover()
 
 # version模块自动注册需要版本控制的 Model
 from xadmin.plugins import xversion
@@ -30,10 +27,7 @@ urlpatterns = [
     url(r'^', include("core.dashboard.urls"), name='dashboard'),
     url(r'^xadmin/', xadmin.site.urls),
     url(r'^pages/', include("core.page.urls"), name='pages'),
-    url(r'^api/',include("api.urls")),
+    url(r'^api/', include("api.urls")),
     url(r'^accounts/', include('registration.backends.simple.urls')),
     url(r'^i18n/', include('django.conf.urls.i18n')),
 ]
-
-# urlpatterns += static(settings.MEDIA_URL, document_root=settings.·)
-# urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

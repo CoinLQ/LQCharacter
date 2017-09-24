@@ -1,5 +1,4 @@
-from django.views.generic import ListView, CreateView, \
-    UpdateView, DeleteView, TemplateView, DetailView
+from django.views.generic import TemplateView
 
 
 class IndexView(TemplateView):
