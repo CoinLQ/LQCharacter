@@ -4,6 +4,7 @@ from core.models import CutBatchOP, BatchVersion, Page, OPage
 
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
+from rest_framework import filters
 from rest_framework.permissions import AllowAny
 import base64
 from PIL import Image
@@ -16,6 +17,8 @@ class PageViewSet(viewsets.ModelViewSet):
     serializer_class = PageSerializer
     queryset = Page.objects.all()
     permission_classes = (AllowAny,)
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_fields = ('final',)
 
     def page_tobe_verify(self, request):
         batch_version = request.query_params['bvid']
@@ -57,7 +60,17 @@ class PageViewSet(viewsets.ModelViewSet):
     @detail_route(methods=["get"], url_path="next")
     def get_next_page(self, request, pk):
         pk = pk
-        page = Page.objects.exclude(pk=pk).first()
+        orig = Page.objects.get(pk=pk)
+        final = orig.final - 1
+        page = Page.objects.exclude(pk=pk).filter(final=final).first() 
+        if not page:
+            return Response(
+            {
+                "id": 'none',
+                "code": '没有下一页',
+                "image_url": 'not_found.jpg',
+                "jsondata": ''
+            })
         b64 = page.c_page.first().cut_data
         base64.b64decode(b64)
         return Response(
@@ -81,8 +94,9 @@ class PageViewSet(viewsets.ModelViewSet):
         elif page.final == 1:
             page.final = 2
         page.save()
-        page.image.final = True
-        page.image.save()
+        if page.final == 2:
+            page.image.final = True
+            page.image.save()
         return Response({
             "id": pk,
             "code": page.image_name,

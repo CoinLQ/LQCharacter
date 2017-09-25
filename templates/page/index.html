@@ -18,13 +18,14 @@
 
 {% block base_foot_script %}
 <script type="text/javascript">
+var final_val="{{ final_val }}";
 window.vv=new Vue({
   el: '#pages-list',
   delimiters: ['[[', ']]'],
   data: {
     newLabel: '',
     pages: [],
-    api_base: "/api/",
+    api_base: "/api/pages?final=",
     current_id: 0,
     current: {}
   },
@@ -33,7 +34,7 @@ window.vv=new Vue({
   },
   methods: {
     loadPage: function() {
-        var json_server_api = this.api_base + 'pages';
+        var json_server_api = this.api_base + final_val;
         this.$http.get(json_server_api).then(function (response) {
             this.pages = response.data.models;
         }, function(error) {
@@ -45,7 +46,11 @@ window.vv=new Vue({
 })
 
   $(function() {
-    $('.lt-menu .menu-content').first().find('.submenu').first().addClass('active');
+    if (final_val == "0") {
+      $('.lt-menu .menu-content').first().find('.submenu').first().addClass('active');
+    } else {
+      $('.lt-menu .menu-content').first().find('.submenu').first().next().addClass('active');
+    }
   });
 </script>
 
