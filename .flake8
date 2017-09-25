@@ -1,0 +1,10 @@
+
+[flake8]
+exclude = .git,__pycache__,docs,old,build,dist,*/docs/*,*/.tox/*,*/.venv/*
+max-complexity = 10
+max-line-length = 110
+
+# E12x continuation line indentation
+# E251 no spaces around keyword / parameter equals
+# E303 too many blank lines (3)
+ignore = E12,E251,E303
