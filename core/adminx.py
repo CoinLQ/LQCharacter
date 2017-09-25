@@ -77,7 +77,7 @@ def put_zip_into_db(batch_version, zip_path):
     zfile = zipfile.ZipFile(zip_path, 'r')
     # TODO 要和用户约定上传文件格式
     for i in zfile.namelist():
-        if i.index(".")>-1:
+        if i.index(".") > -1:
             name = i.split('.')
         else:
             continue
@@ -143,7 +143,7 @@ class BatchVersionModelForm(forms.ModelForm):
             if tmp_md5 == this_md5:
                 existed = True
                 break
-        # b = BV(organiztion=upload_field.name.split("_")[0],des=self.data['des'])
+
         b = self.instance
         b.organiztion = self.data['organiztion']
         b.des = self.data['des']
@@ -155,8 +155,7 @@ class BatchVersionModelForm(forms.ModelForm):
                 for chunk in upload_field.chunks():
                     destination.write(chunk)
             put_zip_into_db(b, upload_field)
-        #TODO 与贤颠法师确认如何生成BatchVersion
-        # ...do something with upload_field here...
+
         return super(BatchVersionModelForm, self).save(commit=commit)
 
     class Meta:
