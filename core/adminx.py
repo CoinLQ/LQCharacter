@@ -77,7 +77,7 @@ def put_zip_into_db(batch_version, zip_path):
     zfile = zipfile.ZipFile(zip_path, 'r')
     # TODO 要和用户约定上传文件格式
     for i in zfile.namelist():
-        if i.find(".")>-1:
+        if i.find(".") > -1:
             name = i.split('.')
         else:
             continue

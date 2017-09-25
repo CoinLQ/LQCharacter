@@ -62,7 +62,7 @@ class PageViewSet(viewsets.ModelViewSet):
         pk = pk
         orig = Page.objects.get(pk=pk)
         final = orig.final - 1
-        page = Page.objects.exclude(pk=pk).filter(final=final).first() 
+        page = Page.objects.exclude(pk=pk).filter(final=final).first()
         if not page:
             return Response(
             {
