@@ -1,6 +1,6 @@
 
 [flake8]
-exclude = .git,__pycache__,docs,old,build,dist,*/docs/*,*/.tox/*,*/.venv/*
+exclude = */migrations/*,.git,__pycache__,docs,old,build,dist,*/docs/*,./fabfile.py,./manage.py
 max-complexity = 10
 max-line-length = 110
 

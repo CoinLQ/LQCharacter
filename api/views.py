@@ -9,7 +9,6 @@ import base64
 from PIL import Image
 import io
 from django.db.models import Q
-import hashlib
 import urllib
 
 
@@ -94,7 +93,7 @@ class PageViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['get'], url_path='get_final')
     def get_final(self, request):
         batch_version = request.query_params['bvid']
-        return Page.objects.filter(Q(final__gt=0)&Q(batch_version=batch_version))
+        return Page.objects.filter(Q(final__gt=0) & Q(batch_version=batch_version))
 
 
 
