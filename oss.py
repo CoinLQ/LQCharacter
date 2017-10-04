@@ -4,7 +4,6 @@ import os
 auth = oss2.Auth(os.environ.get('OSS_API_KEY'), os.environ.get('OSS_API_SECRET'))
 bucket = oss2.Bucket(auth, 'oss-cn-shanghai.aliyuncs.com', 'tripitaka')
 
-
 def get_oss_by_name(image_name):
     file_name_list = image_name.split("-")[0].split("_")
     return 'lqhansp/' + "/".join(file_name_list) + "/" + image_name
