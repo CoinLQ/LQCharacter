@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     'django_extensions',
     'xadmin',
     'crispy_forms',
-    'reversion'
+    'reversion',
+    'storages'
 ]
 
 MIDDLEWARE = [

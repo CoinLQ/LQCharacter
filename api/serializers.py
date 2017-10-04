@@ -16,7 +16,7 @@ class PageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Page
-        fields = ['id', 'batch_version', 'image_name', 'image_md5', 'c_page', 'get_page_url']
+        fields = ['id', 'batch_version', 'image_name', 'image_md5', 'c_page']
 
 
 class BatchVersionSerializer(serializers.ModelSerializer):
