@@ -23,6 +23,7 @@ from dotmap import DotMap
 from lqcharacter import settings
 from django.db import transaction
 from lib.arrange_rect import ArrangeRect
+from lib.utils import timeit
 # [Django API](https://docs.djangoproject.com/en/1.11/)
 
 db_storage = db_file_storage.storage.DatabaseFileStorage()
@@ -78,7 +79,7 @@ class FinalStatus(object):
 
 class BatchVersion(models.Model, UsableStatus, ORGGroup):
     class Meta:
-        verbose_name = '版本批次'
+        verbose_name = u'版本批次'
         verbose_name_plural = u"版本批次管理"
         ordering = ('-submit_date', )
 
@@ -94,7 +95,7 @@ class BatchVersion(models.Model, UsableStatus, ORGGroup):
     des = models.TextField(verbose_name=u'描述', null=True, blank=True, max_length= 128)
     accepted = models.PositiveSmallIntegerField(u'状态', choices=UsableStatus.STATUS,
             default=UsableStatus.UNUSABLE, db_index=True)
-    upload_field = models.FileField(null=True, blank=True, upload_to="", verbose_name="zip文件")
+    upload_field = models.FileField(null=True, blank=True, upload_to="", verbose_name=u"zip文件")
 
 
     def __str__(self):
@@ -117,13 +118,13 @@ class Page(models.Model):
     batch_version = models.ForeignKey(BatchVersion, blank=True, null=True, on_delete=models.CASCADE,
                                       related_name="page_batchversion")
     image = models.ForeignKey(OPage)
-    final = models.SmallIntegerField(verbose_name='校对情况', choices=FinalStatus.STATUS, default=0)
+    final = models.SmallIntegerField(verbose_name=u'校对情况', choices=FinalStatus.STATUS, default=0)
     created_at = models.DateTimeField(u'创建于', null=True, blank=True, auto_now_add=True)
     updated_at = models.DateTimeField(u'更新于', null=True, blank=True, auto_now=True)
-    temp_image = models.FileField(u'临时图片', null=True, blank=True, help_text='s3本地缓存', upload_to='tmp/')
+    temp_image = models.FileField(u'临时图片', null=True, blank=True, help_text=u's3本地缓存', upload_to='tmp/')
 
     class Meta:
-        verbose_name = '页'
+        verbose_name = u'页'
         verbose_name_plural = u"页面管理"
         ordering = ('-created_at', )
 
@@ -147,7 +148,8 @@ class Page(models.Model):
 
     def __str__(self):
         return self.image_name
-
+    
+    @timeit
     def rebuild_rect(self):
         self.rects.all().delete()
         json_str = base64.b64decode(self.c_page.first().cut_data)
@@ -156,11 +158,12 @@ class Page(models.Model):
         image = self._remote_image_stream()
         for _m in cut_result:
             m = DotMap(_m)
-            rect = Rect.objects.create(page=self, x=m.x, y=m.y, width=int(m.width), height=int(m.height),
-                                       confidence=m.confidence, op=m.op, hans=m.hans)
             if m.op != 3:
+                rect = Rect.objects.create(page=self, x=m.x, y=m.y, width=int(m.width), height=int(m.height),
+                                       confidence=m.confidence, op=m.op, hans=m.hans)
                 rect.feed_image2DB(image)
 
+    @timeit
     def reformat_rects(self):
         columns = ArrangeRect.resort_rects_from_qs(self.rects.exclude(op=3))
         with transaction.atomic():
@@ -236,7 +239,7 @@ class Rect(models.Model):
     op = models.PositiveSmallIntegerField(u'类型', default=0, db_index=True)
     hans = models.CharField(u'汉字', max_length=4, default='')
     page = models.ForeignKey(Page, blank=True, null=True, on_delete=models.CASCADE, related_name="rects")
-    inset = models.FileField(null=True, blank=True, help_text='嵌入临时截图',
+    inset = models.FileField(null=True, blank=True, help_text=u'嵌入临时截图',
                              upload_to='core.DBPicture/bytes/filename/mimetype',
                              storage=db_storage)
     s3_inset = models.FileField(u's3地址', blank=True, null=True, upload_to='tripitaka/hans',

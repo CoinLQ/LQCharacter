@@ -100,3 +100,4 @@ ENV/
 .mypy_cache/
 db.sqlite3
 core/migrations
+.docker-data/
