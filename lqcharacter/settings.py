@@ -105,7 +105,7 @@ DATABASES = {
         'PASSWORD': os.environ.get('DB_PASS', 'password'),
         'HOST': os.environ.get('DB_HOST', '127.0.0.1'),
         'PORT': os.environ.get('DB_PORT', '3307'),
-        'OPTIONS': {'charset': 'utf8', 'init_command': 'SET default_storage_engine=InnoDB'}
+        'OPTIONS': {'charset': 'utf8mb4', 'init_command': 'SET default_storage_engine=InnoDB'}
     }
 }
 
