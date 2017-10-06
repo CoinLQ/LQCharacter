@@ -49,4 +49,3 @@ class SimpleTest(TestCase):
         page = Page.objects.first()
         columns = ArrangeRect.resort_rects_from_base64(page)
         page.make_annotate(columns)
-

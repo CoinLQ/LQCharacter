@@ -252,7 +252,7 @@ LOGGING = {
         'default': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': 'logs/mylog.log',
+            'filename': 'logs/default.log',
             'maxBytes': 1024 * 1024 * 50,  # 5 MB
             'backupCount': 5,
             'formatter': 'default',

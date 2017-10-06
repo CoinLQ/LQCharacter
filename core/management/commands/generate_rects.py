@@ -9,4 +9,3 @@ class Command(BaseCommand):
                 print(page.id)
                 page.rebuild_rect()
                 page.reformat_rects()
-

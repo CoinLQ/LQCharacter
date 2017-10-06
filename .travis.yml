@@ -4,8 +4,13 @@ python:
   - "3.6"
   - "nightly"
 # command to install dependencies
+env:
+  - OSS_API_KEY=Key
+  - OSS_API_SECRET=SECRET
 install:
   - pip install -r requirements.txt
+  - pip install https://github.com/CoinLQ/xadmin/archive/master.zip
+  - pip install https://github.com/CoinLQ/db_file_storage/archive/master.zip
 # command to run tests
 script:
   - python manage.py loaddata ./fixtures/core_fixture.json

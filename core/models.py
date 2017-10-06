@@ -148,7 +148,7 @@ class Page(models.Model):
 
     def __str__(self):
         return self.image_name
-    
+
     @timeit
     def rebuild_rect(self):
         self.rects.all().delete()
