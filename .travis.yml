@@ -10,6 +10,10 @@ install:
   - pip install -r requirements.txt
   - pip install https://github.com/CoinLQ/xadmin/archive/master.zip
   - pip install https://github.com/CoinLQ/db_file_storage/archive/master.zip
+before_script:
+  - flake8 .
+  - python manage.py makemigrations
+  - python manage.py migrate
 # command to run tests
 script:
   - python manage.py loaddata ./fixtures/core_fixture.json
