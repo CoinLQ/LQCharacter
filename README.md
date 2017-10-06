@@ -1,7 +1,11 @@
 # LQCharacter
 
+[![python](https://img.shields.io/badge/python-3.5-blue.svg)](https://www.python.org/)
+[![DJango](https://img.shields.io/badge/Django-v1.11-orange.svg)](https://www.djangoproject.com/)
 [![Build Status](https://travis-ci.org/CoinLQ/LQCharacter.svg?branch=master)](https://travis-ci.org/CoinLQ/LQCharacter)
 [![codecov](https://codecov.io/gh/CoinLQ/AnyCollating/branch/master/graph/badge.svg)](https://codecov.io/gh/CoinLQ/AnyCollating)
+[![license-BSD](https://img.shields.io/badge/license-BSD-green.svg)](LICENSE)
+
 
 切分与识别
 
