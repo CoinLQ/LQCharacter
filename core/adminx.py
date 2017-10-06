@@ -61,7 +61,7 @@ class PageAdmin(object):
     search_fields = Page.Config.search_fields
 
 
-auth = oss2.Auth(os.environ.get('OSS_API_KEY'), os.environ.get('OSS_API_SECRET'))
+auth = oss2.Auth(os.environ.get('OSS_API_KEY', 'key'), os.environ.get('OSS_API_SECRET', 'pass'))
 bucket = oss2.Bucket(auth, 'oss-cn-shanghai.aliyuncs.com', 'tripitaka')
 
 
