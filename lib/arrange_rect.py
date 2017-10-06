@@ -9,6 +9,7 @@ class ArrangeRect(object):
     def resort_rects_from_base64(cls, page):
         json_str = base64.b64decode(page.c_page.first().cut_data)
         cut_result = json.loads(json_str.decode('utf-8'))
+        cut_result = list(filter(lambda Y: Y['op'] != 3, cut_result))
         mean_width = int(np.mean(list(map(lambda X: int(X['width']), cut_result))))
         columns, m = dict(), 0
         column_len = dict()
@@ -16,7 +17,7 @@ class ArrangeRect(object):
             m = m + 1
             columns[m] = cls._pick_one_column(cut_result, mean_width)
             column_len[m] = len(columns[m])
-        return columns
+        return columns, column_len
 
     @classmethod
     def resort_rects_from_qs(cls, queryset):
@@ -28,7 +29,7 @@ class ArrangeRect(object):
             m = m + 1
             columns[m] = cls._pick_one_column(cut_result, mean_width)
             column_len[m] = len(columns[m])
-        return columns
+        return columns, column_len
 
     @classmethod
     def _pick_rtop_rectangle(cls, rects, height, width):

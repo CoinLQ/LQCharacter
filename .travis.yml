@@ -2,7 +2,6 @@ language: python
 python:
   - "3.5"
   - "3.6"
-  - "nightly"
 # command to install dependencies
 env:
   - OSS_API_KEY=Key OSS_API_SECRET=SECRET DJANGO_SETTINGS_MODULE=lqcharacter.ci_settings
@@ -14,7 +13,7 @@ before_script:
   - flake8 .
   - python manage.py makemigrations
   - python manage.py migrate
+  - python manage.py loaddata ./fixtures/core_fixture.json
 # command to run tests
 script:
-  - python manage.py loaddata ./fixtures/core_fixture.json
   - python manage.py test # or py.test for Python versions 3.5 and below

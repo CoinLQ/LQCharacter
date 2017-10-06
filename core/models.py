@@ -165,7 +165,7 @@ class Page(models.Model):
 
     @timeit
     def reformat_rects(self):
-        columns = ArrangeRect.resort_rects_from_qs(self.rects.exclude(op=3))
+        columns, column_len = ArrangeRect.resort_rects_from_qs(self.rects.exclude(op=3))
         with transaction.atomic():
             for lin_n, line in columns.items():
                 for col_n, col in enumerate(line):
