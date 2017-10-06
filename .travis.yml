@@ -16,4 +16,5 @@ before_script:
   - python manage.py loaddata ./fixtures/core_fixture.json
 # command to run tests
 script:
-  - python manage.py test # or py.test for Python versions 3.5 and below
+  - coverage run manage.py test # or py.test for Python versions 3.5 and below
+  - codecov --token=ccd167ad-660c-4730-a13f-01038bb8389a

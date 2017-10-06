@@ -29,3 +29,4 @@ django-storages==1.6.5
 dotmap==1.2.20
 numpy==1.13.1
 django-redis==4.6
+codecov==2.0.9
