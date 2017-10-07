@@ -47,5 +47,5 @@ class SimpleTest(TestCase):
 
     def _test_split_cols(self):
         page = Page.objects.first()
-        columns = ArrangeRect.resort_rects_from_base64(page)
+        columns, column_len = ArrangeRect.resort_rects_from_base64(page)
         page.make_annotate(columns)
