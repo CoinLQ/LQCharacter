@@ -1,0 +1,30 @@
+version: '3'
+services:
+  neo4j:
+    image: neo4j:latest
+    volumes:
+      - ./.docker-data/neo4j:/data
+    environment:
+      - NEO4J_AUTH=none
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+  mysql:
+    restart: always
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: test
+      MYSQL_DATABASE: lqcharacter
+      MYSQL_PASSWORD: password
+      MYSQL_CHARSET: utf8
+      MYSQL_ROOT_HOST: '127.0.0.1'
+    volumes:
+      - .docker-data/mysql:/var/lib/mysql
+    ports:
+      - "3307:3306"
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --init-connect='SET NAMES utf8mb4;' --innodb-flush-log-at-trx-commit=0
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"

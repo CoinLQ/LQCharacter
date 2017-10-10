@@ -22,4 +22,11 @@ django-registration==2.2
 flake8==3.4.1
 #pip install https://github.com/CoinLQ/xadmin/archive/master.zip
 #pip install https://github.com/CoinLQ/django-fagungis/archive/master.zip
+#pip install https://github.com/CoinLQ/db_file_storage/archive/master.zip
 #Fabric3==1.13.1.post1
+django-storages==1.6.5
+#django-db-file-storage==0.4.2
+dotmap==1.2.20
+numpy==1.13.1
+django-redis==4.6
+codecov==2.0.9

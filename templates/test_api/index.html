@@ -1,0 +1,18 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>切分系统</title>
+    </head>
+    <body>
+        <div id="pages-list">
+            <form enctype="multipart/form-data" method="post" action="/testapi/upload">{% csrf_token %}
+                描述<input type="text" name="des" >
+           组织<input type="text" name="org" >
+           <input type="file" name="myfiles" multiple="">
+
+           <br/>
+           <input type="submit" value="upload"/>
+        </form>
+        </div>
+</body>
+</html>

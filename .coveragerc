@@ -1,0 +1,6 @@
+[run]
+source = lqcharacter
+branch = 1
+
+[report]
+omit = *tests*

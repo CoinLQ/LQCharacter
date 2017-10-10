@@ -1,0 +1,20 @@
+language: python
+python:
+  - "3.5"
+  - "3.6"
+# command to install dependencies
+env:
+  - OSS_API_KEY=Key OSS_API_SECRET=SECRET DJANGO_SETTINGS_MODULE=lqcharacter.ci_settings
+install:
+  - pip install -r requirements.txt
+  - pip install https://github.com/CoinLQ/xadmin/archive/master.zip
+  - pip install https://github.com/CoinLQ/db_file_storage/archive/master.zip
+before_script:
+  - flake8 .
+  - python manage.py makemigrations
+  - python manage.py migrate
+  - python manage.py loaddata ./fixtures/core_fixture.json
+# command to run tests
+script:
+  - coverage run manage.py test # or py.test for Python versions 3.5 and below
+  - codecov --token=ccd167ad-660c-4730-a13f-01038bb8389a

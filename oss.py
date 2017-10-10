@@ -1,7 +1,7 @@
 import oss2
 import os
 
-auth = oss2.Auth(os.environ.get('OSS_API_KEY'), os.environ.get('OSS_API_SECRET'))
+auth = oss2.Auth(os.environ.get('OSS_API_KEY', 'key'), os.environ.get('OSS_API_SECRET', 'pass'))
 bucket = oss2.Bucket(auth, 'oss-cn-shanghai.aliyuncs.com', 'tripitaka')
 
 

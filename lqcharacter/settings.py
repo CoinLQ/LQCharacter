@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     'django_extensions',
     'xadmin',
     'crispy_forms',
-    'reversion'
+    'reversion',
+    'storages'
 ]
 
 MIDDLEWARE = [
@@ -93,9 +94,18 @@ WSGI_APPLICATION = 'lqcharacter.wsgi.application'
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
 DATABASES = {
-    'default': {
+    'default1': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    },
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.environ.get('DB_NAME', 'lqcharacter'),
+        'USER': os.environ.get('DB_USER', 'test'),
+        'PASSWORD': os.environ.get('DB_PASS', 'password'),
+        'HOST': os.environ.get('DB_HOST', '127.0.0.1'),
+        'PORT': os.environ.get('DB_PORT', '3307'),
+        'OPTIONS': {'charset': 'utf8mb4', 'init_command': 'SET default_storage_engine=InnoDB'}
     }
 }
 
@@ -104,18 +114,11 @@ DATABASES = {
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator', },
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+             'OPTIONS': {'min_length': 8, }},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator', },
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator', }
 ]
 
 
@@ -211,10 +214,30 @@ REST_FRAMEWORK = {
     ),
 }
 
+# Redis Cache Settings
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': '127.0.0.1:6379',
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+    },
+}
+
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
+# Redis Cache Settings end
+
 
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'default': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(message)s'
+        }
+    },
     'filters': {
         'require_debug_false': {
             '()': 'django.utils.log.RequireDebugFalse'
@@ -225,6 +248,22 @@ LOGGING = {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
+        },
+        'default': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': 'logs/default.log',
+            'maxBytes': 1024 * 1024 * 50,  # 5 MB
+            'backupCount': 5,
+            'formatter': 'default',
+        },
+        'request_handler': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': 'logs/django_request.log',
+            'maxBytes': 1024 * 1024 * 50,  # 5 MB
+            'backupCount': 5,
+            'formatter': 'default',
         },
         'console': {
             'level': 'DEBUG',
@@ -252,3 +291,8 @@ SIMPLE_BACKEND_REDIRECT_URL = '/'
 LOGIN_REDIRECT_URL = reverse_lazy('dashboard')
 LOGIN_URL = reverse_lazy('auth_login')
 LOGOUT_URL = reverse_lazy('auth_logout')
+
+try:
+    from .local_settings import *
+except ImportError:
+    pass
