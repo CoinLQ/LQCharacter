@@ -1,4 +1,4 @@
-from core.models import CutBatchOP, BatchVersion, Page, OPage
+from core.models import CutBatchOP, BatchVersion, Page, OPage, Rect
 from rest_framework import serializers
 
 
@@ -29,3 +29,10 @@ class OPageSerializer(serializers.ModelSerializer):
     class Meta:
         model = OPage
         fields = ['id', 'name', 'final', 'md5']
+
+
+class RectSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rect
+        fields = ['id', 'line_no', 'col_no', 'x', 'y', 'width', 'height', 'confidence',
+                  'op', 'hans', 'page', 'inset']

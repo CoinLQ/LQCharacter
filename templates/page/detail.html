@@ -15,14 +15,14 @@
 
 <!-- template for the split box component. -->
 <script type="text/x-template" id="split-box-template">
-  <rect :x="stat.x" :y="stat.y" :width="stat.width" :height="stat.height" :stroke="strokeColor" fill="transparent" stroke-width="1" @click.prevent="choice(stat)"
-    @keyup="movestep($event)" ></rect>
+  <rect class='resize-drag' :x="stat.x" :y="stat.y" :width="stat.width" :height="stat.height" :stroke="strokeColor" fill="transparent" stroke-width="1" @click.prevent="choice(stat)"
+    @keyup="movestep($event)" :key="stat.id"></rect>
 </script>
 
 <!-- demo root element -->
 <div id="demo">
   <!-- Use the component -->
-  <svg :height="height" :width="width">
+  <svg :width="width" :height="height" @dblclick="add_rect($event)" viewBox="0,0,1000,800" preserveAspectRatio="xMinYMin meet">
     <image :xlink:href="image_url" x="0" y="0" :height="height" :width="width" ref="page_image"/>
     <pieces :stats="stats" :choice="choice" :movestep="movestep"></pieces>
   </svg>
@@ -31,9 +31,9 @@
       <div class='rect-info'>
       <span>坐标: ([[current.x]], [[current.y]])</span>
       <span>[[current.width]]</span>
-      <input type="range" v-model="current.width"  min="1" max="150" @change="onChange">
+      <input type="range" v-model="current.width"  min="3" max="150" @change="onChange">
       <span>[[current.height]]</span>
-      <input type="range" v-model="current.height" min="1" max="150" @change="onChange">
+      <input type="range" v-model="current.height" min="3" max="150" @change="onChange">
       </div>
       <button @click="remove(current)" class="small btn btn-primary">删除</button>
       <button @click="addnew()" class="small btn btn-primary">新增</button>
@@ -103,7 +103,37 @@ Vue.component('pieces', {
     }
   },
   created() {
-    document.addEventListener('keydown', this.movestep)
+    var that = this;
+    document.addEventListener('keydown', this.movestep);
+    interact('.resize-drag')
+    .resizable({
+        edges: { left: true, right: true, bottom: true, top: true },
+        onend:  function (event) {
+          window.vv.$emit('resizend', event)
+        }
+    })
+    .on('resizemove',function (event) {
+       window.vv.$emit('resize', event)
+    })
+    .draggable({
+        // enable inertial throwing
+        inertia: true,
+        // keep the element within the area of it's parent
+        restrict: {
+            restriction: "parent",
+            endOnly: true,
+            elementRect: { top: 0, left: 0, bottom: 1, right: 1 }
+        },
+
+        // call this function on every dragmove event
+        onmove: function (event) {
+            window.vv.$emit('drag', event)
+        },
+        // call this function on every dragend event
+        onend: function (event) {
+            window.vv.$emit('dragend', event)
+        }
+    });
   },
   beforeDestroy() {
     document.removeEventListener('keydown', this.movestep)
@@ -128,6 +158,11 @@ window.vv = new Vue({
   },
   mounted: function() {
     this.loadPage(page_id);
+    var that = this;
+    this.$on('resize', this.update_rect);
+    this.$on('drag', this.drag_rect);
+    this.$on('resizend', this.actionend);
+    this.$on('dragend', this.actionend);
   },
   watch: {
 
@@ -144,7 +179,6 @@ window.vv = new Vue({
             // success callback
 
             swal({title: "随喜!", text: "成功提交一个校对!正在加载下一页", timer: 2000, showConfirmButton: true});
-          console.log(page_id)
           that.loadNextPage(page_id);
         }, function(error) {
           // error callback
@@ -156,7 +190,8 @@ window.vv = new Vue({
       if (this.stats.length > 3) {
         var index = this.stats.indexOf(stat);
         stat.op = 3;
-        Vue.set(this.stats, index, stat);
+        // Vue.set(this.stats, index, stat);
+        Vue.delete(this.stats, index)
         //this.stats.splice(this.stats.indexOf(stat), 1)
       } else {
         alert('Can\'t delete more!')
@@ -165,6 +200,12 @@ window.vv = new Vue({
     addnew: function() {
       var new_id = this.stats[this.stats.length-1].id + 1;
       var ins = {id: new_id, x: this.current.x+30, y: this.current.y+30, width: 30, height: 30, op: 1, confidence: 1, selected: false};
+      this.stats.push(ins);
+      this.choice(ins);
+    },
+    add_rect: function(event){
+      var new_id = this.stats[this.stats.length-1].id + 1;
+      var ins = {id: new_id, x: event.offsetX, y: event.offsetY, width: 30, height: 30, op: 1, confidence: 1, selected: false};
       this.stats.push(ins);
       this.choice(ins);
     },
@@ -266,8 +307,53 @@ window.vv = new Vue({
       }else{
         Vue.set(this.stats, index, this.current);
       }
-    }
+    },
+    update_rect:  function(event){
+      var index = this.stats.indexOf(this.current);
+      var target = event.target,
+      x = (this.current.x  || 0),
+      y = (this.current.y || 0);
 
+      // update the element's style
+      if ((event.rect.width > 2) && (event.rect.height >2)) {
+        this.current.width = parseInt(event.rect.width) ;
+        this.current.height = parseInt(event.rect.height) ;
+      }
+
+
+      // translate when resizing from top or left edges
+      x += event.deltaRect.left;
+      y += event.deltaRect.top;
+
+      // target.style.webkitTransform = target.style.transform =
+      //    'translate(' + x + 'px,' + y + 'px)';
+      this.current.x = parseInt(x);
+      this.current.y = parseInt(y);
+
+      Vue.set(this.stats, this.index, this.current);
+
+    },
+    drag_rect: function(event) {
+      var target = event.target,
+      x = (this.current.x  || 0),
+      y = (this.current.y || 0);
+
+      // translate when resizing from top or left edges
+      x += event.dx;
+      y += event.dy;
+
+      // translate the element
+      //target.style.webkitTransform = target.style.transform =
+      //  'translate(' + x + 'px, ' + y + 'px)';
+
+      this.current.x = parseInt(x);
+      this.current.y = parseInt(y);
+
+      Vue.set(this.stats, this.index, this.current);
+    },
+    actionend: function(event) {
+      console.log("end", this.current.x , this.current.y, this.current.width, this.current.height )
+    }
   }
 })
 </script>

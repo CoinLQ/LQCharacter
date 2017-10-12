@@ -261,3 +261,7 @@ class Rect(models.Model):
     def delete(self, *args, **kwargs):
         super(Rect, self).delete(*args, **kwargs)
         delete_file(self, 'inset')
+
+    @property
+    def inset_uri(self):
+        return "/files/get/?name=core.DBPicture/bytes/filename/mimetype/%s.png" % self.id

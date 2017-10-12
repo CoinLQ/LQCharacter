@@ -1,5 +1,5 @@
 from rest_framework import viewsets
-from .serializers import BatchVersionSerializer, CutBatchOPSerializer, PageSerializer, OPageSerializer
+from api.serializers import BatchVersionSerializer, CutBatchOPSerializer, PageSerializer, OPageSerializer
 from core.models import CutBatchOP, BatchVersion, Page, OPage
 
 from rest_framework.decorators import detail_route
@@ -108,6 +108,9 @@ class PageViewSet(viewsets.ModelViewSet):
     def get_final(self, request):
         batch_version = request.query_params['bvid']
         return Page.objects.filter(Q(final__gt=0) & Q(batch_version=batch_version))
+
+
+
 
 class CutBatchOPViewSet(viewsets.ModelViewSet):
     serializer_class = CutBatchOPSerializer

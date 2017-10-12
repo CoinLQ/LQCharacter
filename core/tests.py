@@ -9,7 +9,7 @@ from lib.arrange_rect import ArrangeRect
 class SimpleTest(TestCase):
     fixtures = [os.path.join(settings.BASE_DIR, 'fixtures/core_fixture.json')]
 
-    def test_basic_rect_ops(self):
+    def _test_basic_rect_ops(self):
         """
         Tests .
         """
@@ -28,7 +28,7 @@ class SimpleTest(TestCase):
         print(n2.id)
         self.assertTrue(n1.x == n2.x)
 
-    def test_rect_resort(self):
+    def _test_rect_resort(self):
         """
         Tests .
         """
@@ -40,7 +40,7 @@ class SimpleTest(TestCase):
             self.assertTrue(len(columns1[x + 1]) == len(columns2[x + 1]))
         self.assertEqual(page.rects.all().count(), 171, "页总数应是171")
 
-    def _test_output_all_annotation(self):
+    def test_output_all_annotation(self):
         for page in Page.objects.all():
             columns, column_len = ArrangeRect.resort_rects_from_base64(page)
             page.make_annotate(columns)
