@@ -1,10 +1,6 @@
 
 [flake8]
-<<<<<<< HEAD
-exclude = */migrations/*,.git,__pycache__,docs,old,build,dist,*/docs/*,./fabfile.py,./manage.py
-=======
 exclude = */migrations/*,.git,__pycache__,docs,old,build,dist,*/docs/*,./fabfile.py,./manage.py,*settings.py
->>>>>>> 99c8ed6aee11ee22ac644976c17712cf4c0771f5
 max-complexity = 10
 max-line-length = 110
 
