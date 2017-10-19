@@ -1,26 +1,68 @@
 {% load i18n %}
 
+    <!-- start header nav-->
+    <div class="navbar-fixed">
+      <nav class="navbar-color gradient-46deg-purple-deep-orange gradient-shadow">
+        <div class="nav-wrapper">
+          <div class="header-search-wrapper hide-on-med-and-down sideNav-lock">
+            <i class="material-icons">search</i>
+            <input type="text" name="Search" class="header-search-input z-depth-2" placeholder="{% trans "Explore Sutta" %}">
+          </div>
+          <ul class="right hide-on-med-and-down">
+              
 
-<div class="top-bar">
-    <div class="profile"><div class="userpic"><IMG></IMG><div class="username">{{ request.user.username.title }}
-      <div class="top-cmd">
-<ul class="nav nav-tabs">
-        <li class="dropdown">
-          <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="true">
-            M<span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu">
-            <li><a href="#">Action</a></li>
-            <li class="divider"></li>
-            <li><a href="/logout">{% block title %}{% trans "Logout" %}{% endblock %}</a></li>
+            <li>
+              <a href="javascript:void(0);" class="waves-effect waves-block waves-light toggle-fullscreen">
+                <i class="material-icons">settings_overscan</i>
+              </a>
+            </li>
+            <li>
+                <a href="javascript:void(0);" class="waves-effect waves-block waves-light profile-button" data-activates="profile-dropdown">
+                  <span class="avatar-status avatar-online">
+                    <img src="/static/images/4D97769B-F116-4715-99B2-38FE105634B6@2x.png" alt="avatar">
+                    <i></i>
+                  </span>
+                </a><ul id="profile-dropdown" class="dropdown-content" style="white-space: nowrap; opacity: 1; left: 1458.64px; position: absolute; top: 64px; display: none;">
+              <li>
+                <a href="#" class="grey-text text-darken-1">
+                  <i class="material-icons">face</i> {% trans "Profile" %}</a>
+              </li>
+              <li>
+                <a href="#" class="grey-text text-darken-1">
+                  <i class="material-icons">settings</i> {% trans "Settings" %}</a>
+              </li>
+              <li>
+                <a href="#" class="grey-text text-darken-1">
+                  <i class="material-icons">live_help</i> {% trans "Help" %}</a>
+              </li>
+              <li class="divider"></li>
+              <li>
+                <a href="#" class="grey-text text-darken-1">
+                  <i class="material-icons">keyboard_tab</i>{% trans "Logged out" %}</a>
+              </li>
           </ul>
-        </li>
-    </ul>
-      </div>
-</div>
+          </li>
+          <li>
+              <a href="javascript:void(0);" class="waves-effect waves-block waves-light translation-button" data-activates="translation-dropdown">
+                <span class="flag-icon flag-icon-cn"></span>
+              </a><ul id="translation-dropdown" class="dropdown-content">
 
-
-    </div></div>
-    <div class="dropdown-btn">
+            <li>
+              <a href="#!" class="grey-text text-darken-1">
+                <i class="flag-icon flag-icon-cn"></i> CH</a>
+            </li>
+            <li>
+                <a href="#!" class="grey-text text-darken-1">
+                  <i class="flag-icon flag-icon-gb"></i> EN</a>
+              </li>
+          </ul>
+            </li>
+          <!-- translation-button -->
+          
+          <!-- notifications-dropdown -->
+          
+          <!-- profile-dropdown -->
+          
+        </div>
+      </nav>
     </div>
-</div>
