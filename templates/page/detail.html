@@ -22,7 +22,7 @@
 <!-- demo root element -->
 <div id="demo">
   <!-- Use the component -->
-  <svg :width="width" :height="height" @dblclick="add_rect($event)" viewBox="0,0,1000,800" preserveAspectRatio="xMinYMin meet">
+  <svg :width="width" :height="height" @dblclick="add_rect($event)" :view-box="viewbox" preserveAspectRatio="xMinYMin meet">
     <image :xlink:href="image_url" x="0" y="0" :height="height" :width="width" ref="page_image"/>
     <pieces :stats="stats" :choice="choice" :movestep="movestep"></pieces>
   </svg>
@@ -163,6 +163,11 @@ window.vv = new Vue({
     this.$on('drag', this.drag_rect);
     this.$on('resizend', this.actionend);
     this.$on('dragend', this.actionend);
+  },
+  computed: {
+    viewbox: function() {
+      return [0, 0, this.width, this.height].join(' ')
+    }
   },
   watch: {
 
