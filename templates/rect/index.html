@@ -1,0 +1,87 @@
+{% extends "app_base.html" %}
+
+{% block content %}
+<div class="section">
+    <div id="item-posts" class="row">
+        <div class="item-sizer"></div>
+        <div v-for="(page, index) in pages" class="item">
+            <div class="card">
+                <div class="card-content">
+                  <a href="#!"></a>
+                  <p class="row mb-1">
+                    <small class="right">
+                      <a href="#!">
+                        <span class="new badge red accent-2" data-badge-caption="待校对"></span>
+                        <span class="new badge cyan m-0" data-badge-caption="高丽藏"></span>
+                      </a>
+                    </small>
+                    <small class="left">[[page.updated_at]]</small>
+                  </p>
+                  <p class="item-post-content">[[page.image_name]]</p>
+                  <div class="row">
+                    <div class="chip right">
+                     <a :href="/pages/ + page.id">开始校对</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+        </div>
+    </div>
+        
+</div>    
+{% endblock %}
+
+{% block base_foot_script %}
+{% load static %}
+<script src="{% static 'plugins/vendors/perfect-scrollbar.min.js' %}"
+type="text/javascript"></script>
+<script src="{% static 'plugins/vendors/masonry.pkgd.min.js' %}"
+type="text/javascript"></script>
+<script src="{% static 'plugins/vendors/imagesloaded.pkgd.min.js' %}"
+type="text/javascript"></script>
+
+<script type="text/javascript">
+var final_val="{{ final_val }}";
+window.vv=new Vue({
+  el: '#item-posts',
+  delimiters: ['[[', ']]'],
+  data: {
+    newLabel: '',
+    pages: [],
+    api_base: "/api/pages?final=",
+    current_id: 0,
+    current: {}
+  },
+  mounted: function() {
+    this.loadPage();
+  },
+  methods: {
+    loadPage: function() {
+        var json_server_api = this.api_base + final_val;
+        this.$http.get(json_server_api).then(function (response) {
+            this.pages = response.data.models;
+            var $containerBlog = $("#item-posts");
+            $containerBlog.imagesLoaded(function() {
+              $containerBlog.masonry({
+                itemSelector: ".item",
+                columnWidth: ".item-sizer",
+              });
+            });
+        }, function(error) {
+          // error callback
+          console.log('Fail，网址或相关错误！\n错误码：' + error.status + "\n结果：" + error.ok);
+        });
+    },
+  }
+})
+
+  $(function() {
+    if (final_val == "0") {
+      $('.lt-menu .menu-content').first().find('.m-submenu').first().addClass('m-active');
+    } else {
+      $('.lt-menu .menu-content').first().find('.m-submenu').first().next().addClass('m-active');
+    }
+  });
+</script>
+
+{% endblock %}

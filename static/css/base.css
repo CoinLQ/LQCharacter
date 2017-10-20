@@ -332,3 +332,7 @@ textarea {
   padding: 10px;
   right: 100px;
 }
+
+.item-sizer-small {
+    width: 15%;
+}

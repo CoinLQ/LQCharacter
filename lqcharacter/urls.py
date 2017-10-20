@@ -27,6 +27,7 @@ urlpatterns = [
     url(r'^', include("core.dashboard.urls"), name='dashboard'),
     url(r'^xadmin/', xadmin.site.urls),
     url(r'^pages/', include("core.page.urls"), name='pages'),
+    url(r'^rects/', include("core.rect.urls"), name='rects'),
     url(r'^api/', include("api.urls")),
     url(r'^accounts/', include('registration.backends.simple.urls')),
     url(r'^i18n/', include('django.conf.urls.i18n')),

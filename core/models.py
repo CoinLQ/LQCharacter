@@ -264,4 +264,7 @@ class Rect(models.Model):
 
     @property
     def inset_uri(self):
+        if not self.inset:
+            image = self.page._remote_image_stream()
+            self.feed_image2DB(image)
         return "/files/get/?name=core.DBPicture/bytes/filename/mimetype/%s.png" % self.id
