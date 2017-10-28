@@ -26,9 +26,9 @@
                 </div>
               </div>
         </div>
-    </div>
-        
-</div>    
+    </div> 
+</div>
+
 {% endblock %}
 
 {% block base_foot_script %}
@@ -60,17 +60,20 @@ window.vv=new Vue({
         var json_server_api = this.api_base + final_val;
         this.$http.get(json_server_api).then(function (response) {
             this.pages = response.data.models;
-            var $containerBlog = $("#item-posts");
-            $containerBlog.imagesLoaded(function() {
-              $containerBlog.masonry({
-                itemSelector: ".item",
-                columnWidth: ".item-sizer",
-              });
-            });
+            this.$nextTick(function(){
+              var containerBlog = $("#item-posts");
+              containerBlog.imagesLoaded(function() {
+                containerBlog.masonry({
+                  itemSelector: ".item"
+                });
+            })
+          }); 
+            
         }, function(error) {
           // error callback
           console.log('Fail，网址或相关错误！\n错误码：' + error.status + "\n结果：" + error.ok);
         });
+       
     },
   }
 })

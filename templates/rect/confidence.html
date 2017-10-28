@@ -8,12 +8,10 @@
 
             <div class="card">
                 <div class="card-image waves-effect waves-block waves-light">
-                    <a href="#">
+                    <a :href="detail_uri(rect)">
                       <img :src="rect.inset_uri" alt="item-img">
                     </a>
-                    <h4 class="card-title text-shadow m-0">[[rect.hans]]None
-      
-                    </h4>
+                    <h4 class="card-title text-shadow m-0">[[rect.hans]]None</h4>
                   </div>
                 <div class="card-content">
                   <a href="#!"></a>
@@ -24,18 +22,18 @@
                         <span class="new badge cyan m-0" data-badge-caption="高丽藏"></span>
                       </a>
                     </small>
-                    <small class="left">[[rect.page.image_name]]</small>
+                    <small class="left"></small>
                   </p>
-                  <div class="row">
-                    <div class="chip right">
-                     <a :href="/rects/ + rect.id">开始校对</a>
-                    </div>
-                  </div>
                 </div>
               </div>
         </div>
     </div>
-        
+    <div class="left">
+        <a class="waves-effect waves-light btn-large red">
+             <i class="right material-icons ">publish</i> 发布</a>
+        <a class="waves-effect waves-light btn-large ">
+             <i class="right material-icons">forward</i> 继续</a>
+    </div>      
 </div>    
 {% endblock %}
 
@@ -59,7 +57,7 @@ window.vv=new Vue({
   data: {
     newLabel: '',
     rects: [],
-    api_base: "/api/rect?final=",
+    api_base: "/api/rects",
     current_id: 0,
     current: {}
   },
@@ -71,27 +69,30 @@ window.vv=new Vue({
         var json_server_api = this.api_base + final_val;
         this.$http.get(json_server_api).then(function (response) {
             this.rects = response.data.models;
-            var $containerBlog = $("#item-posts");
-            $containerBlog.imagesLoaded(function() {
-              $containerBlog.masonry({
-                itemSelector: ".item",
-                columnWidth: ".item-sizer-small",
-              });
-            });
+            this.$nextTick(function(){
+              var containerBlog = $("#item-posts");
+              containerBlog.imagesLoaded(function() {
+                containerBlog.masonry({
+                  itemSelector: ".item",
+                  columnWidth: ".item-sizer-small",
+                })
+            })})
+            
         }, function(error) {
           // error callback
           console.log('Fail，网址或相关错误！\n错误码：' + error.status + "\n结果：" + error.ok);
         });
     },
+    detail_uri: function(rect){
+      return "/rects/" + rect.id
+    },
   }
 })
 
   $(function() {
-    if (final_val == "0") {
+
       $('.lt-menu .menu-content').first().find('.m-submenu').first().addClass('m-active');
-    } else {
-      $('.lt-menu .menu-content').first().find('.m-submenu').first().next().addClass('m-active');
-    }
+
   });
 </script>
 

@@ -12,6 +12,5 @@ class ConfidenceView(TemplateView):
             return context
 
 
-
-def detail(request, page_id):
-    return render(request, "rect/detail.html", {'page_id': page_id, 'page_title': '页面校对'})
+def detail(request, rect_id):
+    return render(request, "rect/detail.html", {'page_id': rect_id, 'page_title': '切分区域校对'})

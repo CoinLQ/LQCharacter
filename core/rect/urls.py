@@ -6,5 +6,5 @@ from .views import ConfidenceView, detail
 
 urlpatterns = [
   url(r'^$', ConfidenceView.as_view(), name='rect-confidence'),
-  url(r'^(?P<page_id>[0-9A-Za-z-]+)$', detail, name='page-detail'),
+  url(r'^(?P<rect_id>[0-9A-Za-z-]+)$', detail, name='rect-detail'),
 ]

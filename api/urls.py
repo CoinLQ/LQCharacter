@@ -9,7 +9,7 @@ router = routers.SimpleRouter(trailing_slash=False)
 router.register(r'cutbatch', CutBatchOPViewSet)
 router.register(r'batchversion', BatchVersionViewSet)
 router.register(r'pages', PageViewSet)
-router.register(r'rect', RectViewSet)
+router.register(r'rects', RectViewSet)
 
 schema_view = get_schema_view(
     title='Example API',

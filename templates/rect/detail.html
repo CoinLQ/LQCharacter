@@ -8,7 +8,7 @@
     <split-box
       v-for="(stat, index) in stats"
       :stat="stat"
-      :key="stat.id" :choice="choice" :movestep="movestep">
+      :key="stat.id" :choice="choice" :keyaction="keyaction">
     </split-box>
   </g>
 </script>
@@ -16,15 +16,15 @@
 <!-- template for the split box component. -->
 <script type="text/x-template" id="split-box-template">
   <rect class='resize-drag' :x="stat.x" :y="stat.y" :width="stat.width" :height="stat.height" :stroke="strokeColor" fill="transparent" stroke-width="1" @click.prevent="choice(stat)"
-    @keyup="movestep($event)" :key="stat.id"></rect>
+    @keyup="keyaction($event)" :key="stat.id"></rect>
 </script>
 
 <!-- demo root element -->
 <div id="demo">
   <!-- Use the component -->
-  <svg :width="width" :height="height" @dblclick="add_rect($event)" :view-box.camel="viewbox" preserveAspectRatio="xMinYMin meet">
+  <svg :width="svg_width" :height="height" @dblclick="add_rect($event)" :view-box.camel="viewbox" preserveAspectRatio="xMinYMin meet">
     <image :xlink:href="image_url" x="0" y="0" :height="height" :width="width" ref="page_image"/>
-    <pieces :stats="stats" :choice="choice" :movestep="movestep"></pieces>
+    <pieces :stats="stats" :choice="choice" :keyaction="keyaction"></pieces>
   </svg>
   <!-- controls -->
   <div class='controls'>
@@ -73,16 +73,16 @@ Vue.http.interceptors.push(function(request, next) {
 })
 
 
-var page_id="{{ page_id }}";
+var rect_id="{{ page_id }}";
 Vue.config.delimiters = ["[[", "]]"];
 // A resusable polygon graph component
 Vue.component('pieces', {
-  props: ['stats', 'choice', 'movestep'],
+  props: ['stats', 'choice', 'keyaction'],
   template: '#pieces-template',
   components: {
     // a sub component for the labels
     'split-box': {
-      props:  ['stat', 'index', 'total', 'choice', 'movestep'],
+      props:  ['stat', 'index', 'total', 'choice', 'keyaction'],
       template: '#split-box-template',
       computed: {
         strokeColor: function() {
@@ -104,9 +104,11 @@ Vue.component('pieces', {
   },
   created() {
     var that = this;
-    document.addEventListener('keydown', this.movestep);
+    document.addEventListener('keydown', this.keyaction);
     interact('.resize-drag')
     .resizable({
+        inertia: false,
+        preserveAspectRatio: false,
         edges: { left: true, right: true, bottom: true, top: true },
         onend:  function (event) {
           window.vv.$emit('resizend', event)
@@ -117,13 +119,14 @@ Vue.component('pieces', {
     })
     .draggable({
         // enable inertial throwing
-        inertia: true,
+        inertia: false,
         // keep the element within the area of it's parent
         restrict: {
             restriction: "parent",
             endOnly: true,
             elementRect: { top: 0, left: 0, bottom: 1, right: 1 }
         },
+        autoScroll: true,
 
         // call this function on every dragmove event
         onmove: function (event) {
@@ -136,7 +139,7 @@ Vue.component('pieces', {
     });
   },
   beforeDestroy() {
-    document.removeEventListener('keydown', this.movestep)
+    document.removeEventListener('keydown', this.keyaction)
   }
 });
 
@@ -148,16 +151,20 @@ window.vv = new Vue({
   data: {
     newLabel: '',
     id: 1,
+    page_id: '',
     stats: [],//,
     api_base: "/",
     image_url: "",
     activeState: 0,
     current: {},
     width: 1,
-    height: 1
+    height: 1,
+    y: 0,
+    rect_width: 0,
+    x: 0,
   },
   mounted: function() {
-    this.loadPage(page_id);
+    this.loadPage(rect_id);
     var that = this;
     this.$on('resize', this.update_rect);
     this.$on('drag', this.drag_rect);
@@ -166,7 +173,10 @@ window.vv = new Vue({
   },
   computed: {
     viewbox: function() {
-      return [0, 0, this.width, this.height].join(' ')
+      return [this.x-this.rect_width*2, 0, this.rect_width*4, this.height].join(' ')
+    },
+    svg_width: function(){
+      return this.rect_width * 5;
     }
   },
   watch: {
@@ -178,13 +188,13 @@ window.vv = new Vue({
       var jsondata = Base64.encode(JSON.stringify(stats))
       var post_data = {id: this.id, jsondata: jsondata}
 
-      var django_api = "/api/pages/"+page_id + "/save_op";//本地接口
+      var django_api = "/api/pages/"+rect_id + "/save_op";//本地接口
       var that = this;
         this.$http.post(django_api, post_data).then(function (response) {
             // success callback
 
             swal({title: "随喜!", text: "成功提交一个校对!正在加载下一页", timer: 2000, showConfirmButton: true});
-          that.loadNextPage(page_id);
+          that.loadNextPage(rect_id);
         }, function(error) {
           // error callback
           swal("稍等!", "出现一个bug!", "error")
@@ -192,64 +202,70 @@ window.vv = new Vue({
         });
     },
     remove: function (stat) {
-      if (this.stats.length > 3) {
-        var index = this.stats.indexOf(stat);
-        stat.op = 3;
-        // Vue.set(this.stats, index, stat);
-        Vue.delete(this.stats, index)
-        //this.stats.splice(this.stats.indexOf(stat), 1)
-      } else {
-        alert('Can\'t delete more!')
-      }
+      var django_api = "/api/rects/"+stat.id;
+      this.$http.delete(django_api).then(function (response) {
+            // success callback
+            //this.image_url = response.data.image_url;
+            Vue.delete(this.stats, index);
+            vv.choice(vv.stats[0]);
+        }, function(error) {
+          // error callback
+          console.log('Fail，网址或相关错误！\n错误码：' + error.status + "\n结果：" + error.ok);
+        });
+     
     },
-    addnew: function() {
-      var new_id = this.stats[this.stats.length-1].id + 1;
-      var ins = {id: new_id, x: this.current.x+30, y: this.current.y+30, width: 30, height: 30, op: 1, confidence: 1, selected: false};
-      this.stats.push(ins);
-      this.choice(ins);
+    addnew: function() { 
+      var post_data = { x: this.current.x+30, y: this.current.y+30, width: 30, height: 30, op: 1, confidence: 1, page_id: this.page_id};
+      var django_api = "/api/rects"//本地接口
+      this.$http.post(django_api, post_data).then(function (response) {
+          // success callback
+          //this.image_url = response.data.image_url;
+          post_data.id = response.data.id;
+          post_data.selected = false;
+          vv.stats.push(post_data);
+          vv.choice(post_data);
+      }, function(error) {
+        // error callback
+        console.log('Fail，网址或相关错误！\n错误码：' + error.status + "\n结果：" + error.ok);
+      });
     },
     add_rect: function(event){
       var new_id = this.stats[this.stats.length-1].id + 1;
-      var ins = {id: new_id, x: event.offsetX, y: event.offsetY, width: 30, height: 30, op: 1, confidence: 1, selected: false};
+      var ins = {id: new_id, x: event.offsetX, y: event.offsetY, width: 30, height: 30, op: 1, confidence: 1, selected: false, page_id: this.page_id };
       this.stats.push(ins);
       this.choice(ins);
     },
     unselect: function () {
-      if (this.current === null) {
-        return;
-      }
-      index = this.stats.indexOf(this.current);
-      if (index == -1) {
-        return;
-      }
-      this.current.selected = false;
-      Vue.set(this.stats, index, this.current);
+      this.stats = _.each(vv.stats, function(x) {x.selected = false})
     },
     choice: function(stat) {
       this.unselect();
+      stat.selected = true
       this.current = stat
       index = this.stats.indexOf(stat)
       this.activeState= stat.id;
-      this.current.selected = true;
       Vue.set(this.stats, index, this.current);
     },
     onChange: function() {
-      if (this.current.op != 1 )
-      {
-        this.current.op = 2
-      }
-      index = this.stats.indexOf(this.current)
-      Vue.set(this.stats, index, this.current);
+      // if (this.current.op != 1 )
+      // {
+      //   this.current.op = 2
+      // }
+      // index = this.stats.indexOf(this.current)
+      // Vue.set(this.stats, index, this.current);
     },
-    loadPage: function(page_id) {
-        var json_server_api = this.api_base + 'pages/' + this.id + '?pageid=1&limit=10';//json-server接口
-        var django_api = "/api/pages/"+page_id + "/one";//本地接口
+    loadPage: function(rect_id) {
+        var django_api = "/api/rects/"+rect_id + "/split";//本地接口
         this.$http.get(django_api).then(function (response) {
             // success callback
             //this.image_url = response.data.image_url;
             this.image_url = response.data.image_url;//测试数据
-            this.stats = _.map(JSON.parse(Base64.decode(response.data.jsondata)), function(item) { return _.assign({selected: false}, item);});
-            this.choice(this.stats[0]);
+            this.stats = _.map(response.data.rects, function(item) { return _.assign({selected: false}, item);});
+            this.id = response.data.id;
+            this.page_id = response.data.page_id;
+            this.x = response.data.x;
+            this.rect_width = response.data.width;
+            this.choice(_.find(vv.stats, function(x){return x.id == rect_id}));
             this.getImageDimension();
         }, function(error) {
           // error callback
@@ -263,12 +279,12 @@ window.vv = new Vue({
         this.$http.get(django_api).then(function (response) {
             // success callback
             //this.image_url = response.data.image_url;
-            page_id = response.data.id
+            rect_id = response.data.id
             that.image_url = response.data.image_url;//测试数据
             that.stats = _.map(JSON.parse(Base64.decode(response.data.jsondata)), function(item) { return _.assign({selected: false}, item);});
             that.choice(that.stats[0]);
             that.getImageDimension();
-            window.history.pushState("", "", '/pages/'+page_id);
+            window.history.pushState("", "", '/rects/'+rect_id);
             swal("随喜!", "下一页加载入成功!", "success")
         }, function(error) {
           // error callback
@@ -285,35 +301,20 @@ window.vv = new Vue({
       };
       image.src = this.image_url;
     },
-    movestep: function(ev){
+    keyaction: function(ev){
       var current = this.current;
-      if (ev.keyCode == 37) //left
+      console.log(ev.keyCode);
+      // 8 delete
+      // 13 return
+      if (ev.keyCode == 8) //left
       {
-        current.x -= 2
-      } else if (ev.keyCode == 39) //right
-      {
-        current.x += 2
-      } else if (ev.keyCode == 38) //up
-      {
-        current.y -= 2
-      } else if (ev.keyCode == 40) //down
-      {
-        current.y += 2
-      } else {
+        vv.remove(current);
+      }else {
         return
-      }
-      if (current.op !=1 ){
-        current.op = 2;
-      }
-      //bound protection
-      if (current.x < 0 || current.y < 0)
-      {
-        alert('已超出边界');
-      }else{
-        Vue.set(this.stats, index, this.current);
       }
     },
     update_rect:  function(event){
+      console.log('update_rect');
       var index = this.stats.indexOf(this.current);
       var target = event.target,
       x = (this.current.x  || 0),
@@ -327,18 +328,19 @@ window.vv = new Vue({
 
 
       // translate when resizing from top or left edges
+      console.log(event.deltaRect.left, event.deltaRect.top)
+      console.log(event.dx, event.dy)
       x += event.deltaRect.left;
       y += event.deltaRect.top;
 
-      // target.style.webkitTransform = target.style.transform =
-      //    'translate(' + x + 'px,' + y + 'px)';
       this.current.x = parseInt(x);
       this.current.y = parseInt(y);
 
-      Vue.set(this.stats, this.index, this.current);
+      Vue.set(this.stats, index, this.current);
 
     },
     drag_rect: function(event) {
+      console.log('drag_rect');
       var target = event.target,
       x = (this.current.x  || 0),
       y = (this.current.y || 0);
@@ -347,9 +349,6 @@ window.vv = new Vue({
       x += event.dx;
       y += event.dy;
 
-      // translate the element
-      //target.style.webkitTransform = target.style.transform =
-      //  'translate(' + x + 'px, ' + y + 'px)';
 
       this.current.x = parseInt(x);
       this.current.y = parseInt(y);
@@ -357,7 +356,19 @@ window.vv = new Vue({
       Vue.set(this.stats, this.index, this.current);
     },
     actionend: function(event) {
-      console.log("end", this.current.x , this.current.y, this.current.width, this.current.height )
+      
+      var django_api = "/api/rects/" + this.current.id;//本地接口
+      var post_data = {id: this.current.id, x: this.current.x , y: this.current.y, width: this.current.width, height: this.current.height, op: this.current.op}
+      this.$http.put(django_api, post_data).then(function (response) {
+          // success callback
+          //this.image_url = response.data.image_url;
+          this.choice(_.find(vv.stats, function(x){return x.id == rect_id}));
+          console.log("end", this.current.x , this.current.y, this.current.width, this.current.height )
+      }, function(error) {
+        // error callback
+        console.log('Fail，网址或相关错误！\n错误码：' + error.status + "\n结果：" + error.ok);
+      });
+      
     }
   }
 })

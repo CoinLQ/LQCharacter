@@ -17,6 +17,7 @@ from PIL import Image, ImageFont, ImageDraw
 from oss import get_oss_by_name
 from django.core.files.base import ContentFile
 from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.core.validators import MaxValueValidator, MinValueValidator
 from io import BytesIO
 from db_file_storage.model_utils import delete_file, delete_file_if_needed
 from dotmap import DotMap
@@ -232,8 +233,10 @@ class Rect(models.Model):
     col_no = models.PositiveSmallIntegerField(u'列号', default=0)
     x = models.PositiveSmallIntegerField(u'X坐标', default=0)
     y = models.PositiveSmallIntegerField(u'Y坐标', default=0)
-    width = models.PositiveSmallIntegerField(u'Y坐标', default=0)
-    height = models.PositiveSmallIntegerField(u'Y坐标', default=0)
+    width = models.PositiveSmallIntegerField(u'Y坐标', default=1,
+            validators=[MinValueValidator(1), MaxValueValidator(300)])
+    height = models.PositiveSmallIntegerField(u'Y坐标', default=1,
+             validators=[MinValueValidator(1), MaxValueValidator(300)])
     confidence = models.FloatField(u'置信度', default=1, db_index=True)
     op = models.PositiveSmallIntegerField(u'类型', default=0, db_index=True)
     hans = models.CharField(u'汉字', max_length=4, default='')
@@ -243,6 +246,11 @@ class Rect(models.Model):
                              storage=db_storage)
     s3_inset = models.FileField(u's3地址', blank=True, null=True, upload_to='tripitaka/hans',
                                 storage='storages.backends.s3boto.S3BotoStorage')
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['page', 'line_no']),
+        ]
 
     def feed_image2DB(self, image):
         buffer = BytesIO()

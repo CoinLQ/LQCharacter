@@ -35,4 +35,5 @@ class RectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Rect
         fields = ['id', 'line_no', 'col_no', 'x', 'y', 'width', 'height', 'confidence',
-                  'op', 'hans', 'page', 'inset_uri']
+                  'op', 'hans', 'inset_uri', 'page_id']
+
