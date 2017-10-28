@@ -21,6 +21,11 @@
 
 <!-- demo root element -->
 <div id="demo">
+  <div class="left" style="overflow: hidden;zoom: 3" v-bind:style="{ height: rect_height + 'px' }" >
+    <svg :width="rect_wid" :height="height" @dblclick="add_rect($event)" :view-box.camel="rect_viewbox" preserveAspectRatio="xMinYMin none" style="margin:0px;padding:0px">
+        <image :xlink:href="image_url" x="0" y="0" :height="height" :width="width" ref="rect_image"/>
+    </svg>
+  </div>
   <!-- Use the component -->
   <svg :width="svg_width" :height="height" @dblclick="add_rect($event)" :view-box.camel="viewbox" preserveAspectRatio="xMinYMin meet">
     <image :xlink:href="image_url" x="0" y="0" :height="height" :width="width" ref="page_image"/>
@@ -175,14 +180,58 @@ window.vv = new Vue({
     viewbox: function() {
       return [this.x-this.rect_width*2, 0, this.rect_width*4, this.height].join(' ')
     },
+    rect_viewbox: function () {
+      return [this.current.x, this.current.y, this.current.width, this.height].join(' ')
+    },
     svg_width: function(){
       return this.rect_width * 5;
+    },
+    sorted_stats: function() {
+      return _.sortBy(this.stats,['y']);
+    },
+    rect_x: function() {
+      if (this.current) {
+        return this.current.x;
+      }
+      return 0
+    },
+    rect_y: function() {
+      if (this.current) {
+        return this.current.y;
+      }
+      return 0
+    },
+    rect_wid: function() {
+      if (this.current) {
+        return this.current.width;
+      }
+      return 0
+    },
+    rect_height: function() {
+      if (this.current) {
+        return this.current.height;
+      }
+      return 0
     }
   },
   watch: {
 
   },
   methods: {
+    gonext: function (){
+      var loc = this.sorted_stats.indexOf(this.current);
+      var next = this.sorted_stats[loc+1];
+      if (next) {
+        this.choice(next)
+      }
+    },
+    goprev: function() {
+      var loc = this.sorted_stats.indexOf(this.current);
+      var prev = this.sorted_stats[loc-1];
+      if (prev) {
+        this.choice(prev)
+      }
+    },
     submit:function (){
       var stats = _.map(_.cloneDeep(this.stats), function(m){ _.unset(m, 'selected');return m;})
       var jsondata = Base64.encode(JSON.stringify(stats))
@@ -231,9 +280,19 @@ window.vv = new Vue({
     },
     add_rect: function(event){
       var new_id = this.stats[this.stats.length-1].id + 1;
-      var ins = {id: new_id, x: event.offsetX, y: event.offsetY, width: 30, height: 30, op: 1, confidence: 1, selected: false, page_id: this.page_id };
-      this.stats.push(ins);
-      this.choice(ins);
+      var post_data = { x: event.offsetX, y: event.offsetY, width: 30, height: 30, op: 1, confidence: 1, page_id: this.page_id };
+      var django_api = "/api/rects"//本地接口
+      this.$http.post(django_api, post_data).then(function (response) {
+          // success callback
+          //this.image_url = response.data.image_url;
+          post_data.id = response.data.id;
+          post_data.selected = false;
+          vv.stats.push(post_data);
+          vv.choice(post_data);
+      }, function(error) {
+        // error callback
+        console.log('Fail，网址或相关错误！\n错误码：' + error.status + "\n结果：" + error.ok);
+      });
     },
     unselect: function () {
       this.stats = _.each(vv.stats, function(x) {x.selected = false})
@@ -272,25 +331,6 @@ window.vv = new Vue({
           console.log('Fail，网址或相关错误！\n错误码：' + error.status + "\n结果：" + error.ok);
         });
     },
-    loadNextPage: function(p_id) {
-        var json_server_api = this.api_base + 'pages/' + this.id + '?pageid=1&limit=10';//json-server接口
-        var django_api = "/api/pages/"+p_id + "/next";//本地接口
-        var that = this;
-        this.$http.get(django_api).then(function (response) {
-            // success callback
-            //this.image_url = response.data.image_url;
-            rect_id = response.data.id
-            that.image_url = response.data.image_url;//测试数据
-            that.stats = _.map(JSON.parse(Base64.decode(response.data.jsondata)), function(item) { return _.assign({selected: false}, item);});
-            that.choice(that.stats[0]);
-            that.getImageDimension();
-            window.history.pushState("", "", '/rects/'+rect_id);
-            swal("随喜!", "下一页加载入成功!", "success")
-        }, function(error) {
-          // error callback
-          console.log('Fail，网址或相关错误！\n错误码：' + error.status + "\n结果：" + error.ok);
-        });
-    },
     getImageDimension: function (el, onReady) {
 
       var image = new Image();
@@ -299,6 +339,7 @@ window.vv = new Vue({
           that.height = image.height;
           that.width = image.width;
       };
+
       image.src = this.image_url;
     },
     keyaction: function(ev){
@@ -309,7 +350,20 @@ window.vv = new Vue({
       if (ev.keyCode == 8) //left
       {
         vv.remove(current);
-      }else {
+      } else if (ev.keyCode == 13){
+        current.x -= 2;
+        current.y -= 2;
+        current.width += 4;
+        current.height += 4;
+        Vue.set(this.stats, this.index, current); 
+        thid.actionend(0)
+      } else if (ev.keyCode == 38) //up
+      {
+        this.goprev()
+      } else if (ev.keyCode == 40) //down
+      {
+        this.gonext()
+      } else {
         return
       }
     },
@@ -362,7 +416,7 @@ window.vv = new Vue({
       this.$http.put(django_api, post_data).then(function (response) {
           // success callback
           //this.image_url = response.data.image_url;
-          this.choice(_.find(vv.stats, function(x){return x.id == rect_id}));
+          this.choice(_.find(vv.stats, function(x){return x.id == vv.current.id}));
           console.log("end", this.current.x , this.current.y, this.current.width, this.current.height )
       }, function(error) {
         // error callback
