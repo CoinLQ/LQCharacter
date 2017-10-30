@@ -1,47 +1,30 @@
-{% extends "registration/registration_base.html" %}
+{% extends 'registration/base_form.html' %}
+{% load material_form %}
 {% load i18n %}
 
-{% block title %}{% trans "Log in" %}{% endblock %}
-
-{% block content %}
-<form method="post" action="">
-    {% csrf_token %}
-    {% load crispy_forms_tags %}
-    {{ form |crispy }}
-
-    <input type="submit" class="btn btn-primary" value="{% trans 'Log in' %}"></input>
-    <input type="hidden" name="next" value="{{ next }}" />
-</form>
-
-<p>{% trans "Forgot your password?" %} <a href="{% url 'auth_password_reset' %}">{% trans "Reset it" %}</a>.</p>
-<p>{% trans "Not a member?" %} <a href="{% url 'registration_register' %}">{% trans "Register" %}</a>.</p>
+{% block extrahead %}
+<style type="text/css">
+    {{ form.css }}
+</style>
 {% endblock %}
 
+{% block formclass %}{{ form.blockclass|default:"col s12 m8 offset-m2 l8 offset-l2" }}{% endblock %}
 
-{% comment %}
-**registration/login.html**
+{% block formtitle %}
+    {% load static %}
+    <img src="{% static 'images/favicon.ico' %}"/>
+    {% trans 'Log in' %}
+{% endblock %}
 
-It's your responsibility to provide the login form in a template called
-registration/login.html by default. This template gets passed four
-template context variables:
+{% block formbody %}
+    {% form %}
+        {% part form.username prefix %}<i class="material-icons prefix">account_box</i>{% endpart %}
+        {% part form.password prefix %}<i class="material-icons prefix">lock</i>{% endpart %}
+        {% attr form.keep_logged 'group' class append %}right-align{% endattr %}
+    {% endform %}
+{% endblock %}
 
-``form``
-    A Form object representing the login form. See the forms
-    documentation for more on Form objects.
-
-``next``
-    The URL to redirect to after successful login. This may contain a
-    query string, too.
-
-``site``
-    The current Site, according to the SITE_ID setting. If you don't
-    have the site framework installed, this will be set to an instance
-    of RequestSite, which derives the site name and domain from the
-    current HttpRequest.
-
-``site_name``
-    An alias for site.name. If you don't have the site framework
-    installed, this will be set to the value of
-    request.META['SERVER_NAME']. For more on sites, see The
-    "sites" framework.
-{% endcomment %}
+{% block formbuttons %}
+    <a class="waves-effect waves-light btn-flat" href="/accounts/register">{% trans 'Register' %}</a>
+    <button class="waves-effect waves-light btn" type="submit">{% trans 'Log in' %}</button>
+{% endblock %}

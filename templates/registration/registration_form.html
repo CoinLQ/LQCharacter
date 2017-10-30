@@ -1,4 +1,48 @@
-{% extends "registration/registration_base.html" %}
+{% extends 'registration/base_form.html' %}
+{% load material_form %}
+{% load i18n %}
+
+{% block extrahead %}
+<style type="text/css">
+    {{ form.css }}
+</style>
+{% endblock %}
+
+{% block formclass %}{{ form.blockclass|default:"col s12 m8 offset-m2 l8 offset-l2" }}{% endblock %}
+
+{% block formtitle %}
+    {% load static %}
+    <img src="{% static 'images/favicon.ico' %}"/>
+    {% trans 'Register' %}
+{% endblock %}
+
+{% block formbody %}
+    {% csrf_token %}
+    {% comment %}{% form form=form %}{% endform %}{% endcomment %}
+    {% comment %}{% include form.template %}{% endcomment %}
+
+    {% form %}
+        {% part form.username prefix %}<i class="material-icons prefix">account_box</i>{% endpart %}
+        {% part form.email prefix %}<i class="material-icons prefix">email</i>{% endpart %}
+        {% part form.password1 prefix %}<i class="material-icons prefix">lock</i>{% endpart %}
+        {% part form.password2 prefix %}<i class="material-icons prefix">lock</i>{% endpart %}
+    {% endform %}
+{% endblock %}
+
+{% block formbuttons %}
+    <button type="submit" name="_submit" class="btn btn-primary btn-lg">{% trans 'Submit' %}</button>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+{% comment %}{% extends "registration/registration_base.html" %}
 {% load i18n %}
 
 {% block title %}{% trans "Register" %}{% endblock %}
@@ -10,7 +54,7 @@
     {{ form |crispy }}
     <input type="submit" class="btn btn-primary" value="{% trans 'Submit' %}"></input>
 </form>
-{% endblock %}
+{% endblock %}{% endcomment %}
 
 
 {% comment %}

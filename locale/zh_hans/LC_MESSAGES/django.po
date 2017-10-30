@@ -142,7 +142,7 @@ msgstr ""
 
 #: templates/registration/admin_approve_complete_email.html:14
 msgid "log in."
-msgstr ""
+msgstr "登录."
 
 #: templates/registration/admin_approve_complete_email.txt:2
 msgid ""
