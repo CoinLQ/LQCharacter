@@ -32,3 +32,4 @@ django-redis==4.6
 codecov==2.0.9
 
 django-material
+django-celery

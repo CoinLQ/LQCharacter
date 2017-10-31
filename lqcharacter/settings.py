@@ -313,3 +313,12 @@ try:
     from .local_settings import *
 except ImportError:
     pass
+
+CONF_EMAIL = {
+    'smtp_host': 'smtp.126.com',
+    'smtp_port': 25,
+    'username': 'kangqiao182',
+    'password': 'zp627328',
+    'from': 'kangqiao182@126.com',
+    'display_from': 'lqcharacter',
+}
