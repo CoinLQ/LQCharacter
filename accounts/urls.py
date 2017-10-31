@@ -14,8 +14,8 @@ from django.views.generic.base import TemplateView
 from django.template import Template
 
 from registration.backends.simple import views
+common_form_template = 'registration/template_form.html'
 from accounts.forms import *
-
 
 urlpatterns = [
         url(r'^register/$',
@@ -34,11 +34,14 @@ urlpatterns = [
         name='auth_login'),
     url(r'^logout/$',
         auth_views.logout,
-        {'template_name': 'registration/logout.html'},
+        {'template_name': 'registration/logout.html', 'redirect_field_name': 'auth_login'},
         name='auth_logout'),
     url(r'^password/change/$',
         auth_views.password_change,
-        {'post_change_redirect': 'auth_password_change_done'},
+        #{'post_change_redirect': 'auth_password_change_done'},
+        {'post_change_redirect': 'auth_login',
+         'password_change_form': ExPasswordChangeForm,
+         'template_name': common_form_template},
         name='auth_password_change'),
     url(r'^password/change/done/$',
         auth_views.password_change_done,

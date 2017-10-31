@@ -30,7 +30,7 @@ xversion.register_models()
 
 urlpatterns = [
     url(r'^', include("core.dashboard.urls"), name='dashboard'),
-    url(r'^xadmin/', xadmin.site.urls),
+    url(r'^xadmin/', xadmin.site.urls, name=xadmin),
     url(r'^pages/', include("core.page.urls"), name='pages'),
     url(r'^rects/', include("core.rect.urls"), name='rects'),
     url(r'^api/', include("api.urls")),

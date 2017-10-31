@@ -1,0 +1,26 @@
+{% extends 'registration/base_form.html' %}
+{% load material_form %}
+{% load i18n %}
+
+{% block extrahead %}
+<style type="text/css">
+    {{ form.css }}
+</style>
+{% endblock %}
+
+{% block formclass %}{{ form.blockclass|default:"col s12 m8 offset-m2 l8 offset-l2" }}{% endblock %}
+
+{% block formtitle %}
+    {% load static %}
+    <img src="{% static 'images/favicon.ico' %}"/>
+    {% trans form.title %}
+{% endblock %}
+
+{% block formbody %}
+    {% csrf_token %}
+    {% include form.template %}
+{% endblock %}
+
+{% block formbuttons %}
+     {% include form.buttons %}
+{% endblock %}

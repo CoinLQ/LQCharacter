@@ -228,7 +228,7 @@ msgstr ""
 #: templates/registration/password_change_form.html:4
 #: templates/registration/password_change_form.html:10
 msgid "Change password"
-msgstr ""
+msgstr "修改密码"
 
 #: templates/registration/password_reset_complete.html:4
 msgid "Password reset complete"

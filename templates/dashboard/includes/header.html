@@ -24,8 +24,8 @@
                   </span>
                 </a><ul id="profile-dropdown" class="dropdown-content" style="white-space: nowrap; opacity: 1; left: 1458.64px; position: absolute; top: 64px; display: none;">
               <li>
-                <a href="#" class="grey-text text-darken-1">
-                  <i class="material-icons">face</i> {% trans "Profile" %}</a>
+                <a href="{% url 'auth_password_change' %}" class="grey-text text-darken-1">
+                  <i class="material-icons">face</i> {% trans "Change password" %}</a>
               </li>
               <li>
                 <a href="#" class="grey-text text-darken-1">
@@ -37,7 +37,7 @@
               </li>
               <li class="divider"></li>
               <li>
-                <a href="#" class="grey-text text-darken-1">
+                <a href="{% url 'auth_logout' %}" class="grey-text text-darken-1">
                   <i class="material-icons">keyboard_tab</i>{% trans "Logged out" %}</a>
               </li>
           </ul>
