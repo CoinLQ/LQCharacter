@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_swagger',
+    'material.theme.teal',
+    'material',
     'core',
     'django_extensions',
     'xadmin',
