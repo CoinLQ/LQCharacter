@@ -1,0 +1,16 @@
+[mysqld]
+datadir=/var/lib/mysql
+socket=/var/lib/mysql/mysql.sock
+init_connect='SET collation_connection = utf8mb4_general_ci'
+init_connect='SET NAMES utf8mb4'
+character-set-server=utf8mb4
+collation-server=utf8mb4_general_ci
+skip-character-set-client-handshake
+
+# http://www.3mu.me/%E5%A6%82%E4%BD%95%E6%89%93%E5%BC%80mysql%E7%9A%84%E6%85%A2%E6%9F%A5%E8%AF%A2%E6%97%A5%E5%BF%97%E8%AE%B0%E5%BD%95/
+# enable slow query if value is 1.
+slow-query-log=1
+slow-query-log-file=/var/lib/mysql/mysql_slow_query.log
+long-query-time=0
+log-queries-not-using-indexes
+log-slow-admin-statements
