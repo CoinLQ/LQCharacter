@@ -98,3 +98,4 @@ ENV/
 db.sqlite3
 core/migrations
 .docker-data/
+.idea/*

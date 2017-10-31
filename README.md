@@ -57,5 +57,6 @@ export OSS_API_SECRET=<input>
 ```
 ### 本地测试
 ```
-DJANGO_SETTINGS_MODULE=lqcharacter.ci_settings coverage run manage.py test
+cmd> python manage.py collectstatic --settings=lqcharacter.ci_settings
+conf> DJANGO_SETTINGS_MODULE=lqcharacter.ci_settings coverage run manage.py test
 ```
