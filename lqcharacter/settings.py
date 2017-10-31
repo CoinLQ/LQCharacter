@@ -121,15 +121,15 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     },
-    'default2': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get('DB_NAME', 'lqcharacter'),
-        'USER': os.environ.get('DB_USER', 'test'),
-        'PASSWORD': os.environ.get('DB_PASS', 'password'),
-        'HOST': os.environ.get('DB_HOST', '127.0.0.1'),
-        'PORT': os.environ.get('DB_PORT', '3307'),
-        'OPTIONS': {'charset': 'utf8mb4', 'init_command': 'SET default_storage_engine=InnoDB'}
-    },
+    # 'default2': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': os.environ.get('DB_NAME', 'lqcharacter'),
+    #     'USER': os.environ.get('DB_USER', 'test'),
+    #     'PASSWORD': os.environ.get('DB_PASS', 'password'),
+    #     'HOST': os.environ.get('DB_HOST', '127.0.0.1'),
+    #     'PORT': os.environ.get('DB_PORT', '3307'),
+    #     'OPTIONS': {'charset': 'utf8mb4', 'init_command': 'SET default_storage_engine=InnoDB'}
+    # },
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'lqcharacter',
