@@ -31,5 +31,6 @@ numpy==1.13.1
 django-redis==4.6
 codecov==2.0.9
 
+django-template-debug
 django-material
 django-celery

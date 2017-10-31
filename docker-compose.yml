@@ -39,7 +39,7 @@
     restart: always
     image: nginx
     ports:
-      - "80:80"
+      - "8080:8080"
     volumes:
       - ./conf/nginx/lqcharacter_nginx.conf:/etc/nginx/conf.d/lqcharacter_nginx.conf
       - /www/lqhansp/media/:/LQCharacter/media

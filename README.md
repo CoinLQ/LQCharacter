@@ -38,6 +38,12 @@ mkvirtualenv character --python=python3
 ```
 docker-compose up -d
 ```
+#### 在docker中执行
+```
+docker-compose run web_lqcharacter /usr/local/bin/python manage.py makemigrations //docker-compose 1.5.2 环境下
+docker-compose exec web_lqcharacter /usr/local/bin/python manage.py makemigrations
+docker-compose exec web_lqcharacter /usr/local/bin/python manage.py migrate
+```
 ### 加载测试数据
 ```
   python manage.py makemigrations
