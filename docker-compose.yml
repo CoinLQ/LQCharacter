@@ -58,4 +58,4 @@
       - .:/LQCharacter
     links:
       - mysql-lqcharacter:mysql_lqcharacter
-    command: uwsgi -s :8001 -w setting.wsgi -p 3
+    command: uwsgi -s :8001 -w lqcharacter.wsgi -p 3
