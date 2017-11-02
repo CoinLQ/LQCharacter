@@ -16,18 +16,18 @@
     image: mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
-      #MYSQL_USER: test
+      MYSQL_USER: test
       MYSQL_DATABASE: lqcharacter
-      #MYSQL_PASSWORD: password
+      MYSQL_PASSWORD: password
       #MYSQL_CHARSET: utf8
-      #MYSQL_ROOT_HOST: '127.0.0.1'
+      MYSQL_ROOT_HOST: '127.0.0.1'
     volumes:
       #- .docker-data/mysql:/var/lib/mysql
       - ./data/mysql/:/var/lib/mysql
       - ./conf/mysql/:/etc/mysql/conf.d
       - ./data/log/:/var/log/mysql
     ports:
-      - "3307:3306"
+      - "3306:3306"
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --init-connect='SET NAMES utf8mb4;' --innodb-flush-log-at-trx-commit=0
 
   redis:
