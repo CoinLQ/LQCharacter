@@ -78,6 +78,21 @@ class FinalStatus(object):
     )
 
 
+class RectStatus(object):
+    INIT = 0
+    NEW_ADD = 1
+    MODIFIED = 2
+    DELETED = 3
+    DONE = 4
+    STATUS = (
+        (INIT, u'新入库'),
+        (NEW_ADD, u'新增'),
+        (MODIFIED, u'已修改'),
+        (DELETED, u'已删除'),
+        (DONE, u'已处理'),
+    )
+
+
 class BatchVersion(models.Model, UsableStatus, ORGGroup):
     class Meta:
         verbose_name = u'版本批次'
@@ -123,6 +138,7 @@ class Page(models.Model):
     created_at = models.DateTimeField(u'创建于', null=True, blank=True, auto_now_add=True)
     updated_at = models.DateTimeField(u'更新于', null=True, blank=True, auto_now=True)
     temp_image = models.FileField(u'临时图片', null=True, blank=True, help_text=u's3本地缓存', upload_to='tmp/')
+    locked = models.SmallIntegerField(verbose_name=u'锁定状态', default=0, db_index=True)
 
     class Meta:
         verbose_name = u'页'
@@ -238,7 +254,7 @@ class Rect(models.Model):
     height = models.PositiveSmallIntegerField(u'Y坐标', default=1,
              validators=[MinValueValidator(1), MaxValueValidator(300)])
     confidence = models.FloatField(u'置信度', default=1, db_index=True)
-    op = models.PositiveSmallIntegerField(u'类型', default=0, db_index=True)
+    op = models.PositiveSmallIntegerField(u'类型', default=RectStatus.INIT, db_index=True)
     hans = models.CharField(u'汉字', max_length=4, default='')
     page = models.ForeignKey(Page, blank=True, null=True, on_delete=models.CASCADE, related_name="rects")
     inset = models.FileField(null=True, blank=True, help_text=u'嵌入临时截图',

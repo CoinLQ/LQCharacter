@@ -5,9 +5,10 @@ from core.models import Rect, Page
 from rest_framework import filters
 from rest_framework.permissions import AllowAny
 
-from rest_framework.decorators import detail_route
+from rest_framework.decorators import list_route, detail_route
 from rest_framework.response import Response
 from rest_framework import status
+from lib.utils import retrieve_rects
 
 
 class RectViewSet(viewsets.ModelViewSet):
@@ -39,6 +40,15 @@ class RectViewSet(viewsets.ModelViewSet):
                 "rects": list(dict(qs) for qs in rects)
             })
 
+    @detail_route(methods=['get'], url_path='list')
+    def rectlist(self, request, pk):
+        user = request.user
+        queryset = retrieve_rects(user)
+        serializer = RectSerializer(queryset, many=True)
+        return Response({
+            "models": serializer.data
+        })
+
     def create(self, request):
         page_id = request.data['page_id']
         serializer = RectSerializer(data=request.data)
@@ -51,7 +61,6 @@ class RectViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-  
 
     def put(self, request, pk, format=None):
         rect = self.get_object(pk)
