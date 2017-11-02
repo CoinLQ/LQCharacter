@@ -81,6 +81,10 @@ TEMPLATES = [
         ],
         'APP_DIRS': True,
         'OPTIONS': {
+            'builtins': [
+                'material.templatetags.material_form',
+                'template_debug.templatetags.debug_tags'
+            ],
             'context_processors': [
                 'django.template.context_processors.i18n',
                 'django.template.context_processors.media',
@@ -95,20 +99,21 @@ TEMPLATES = [
     },
 ]
 
+# Xiandian
 # shortcut for in form templates
-try:
-    # shortcut for in form templates
-    from django.template.base import add_to_builtins
-    add_to_builtins('material.templatetags.material_form')
-    add_to_builtins('template_debug.templatetags.debug_tags')
-except ImportError:
-    """
-    Django 1.9.
-    """
-    TEMPLATES[0]['OPTIONS']['builtins'] = [
-        'material.templatetags.material_form',
-        'template_debug.templatetags.debug_tags'
-    ]
+# try:
+#     # shortcut for in form templates
+#     from django.template.base import add_to_builtins
+#     add_to_builtins('material.templatetags.material_form')
+#     add_to_builtins('template_debug.templatetags.debug_tags')
+# except ImportError:
+#     """
+#     Django 1.9.
+#     """
+#     TEMPLATES[0]['OPTIONS']['builtins'] = [
+#         'material.templatetags.material_form',
+#         'template_debug.templatetags.debug_tags'
+#    ]
 
 WSGI_APPLICATION = 'lqcharacter.wsgi.application'
 
@@ -121,24 +126,25 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     },
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': os.environ.get('DB_NAME', 'lqcharacter'),
+    #     'USER': os.environ.get('DB_USER', 'test'),
+    #     'PASSWORD': os.environ.get('DB_PASS', 'password'),
+    #     'HOST': os.environ.get('DB_HOST', 'localhost'),
+    #     'PORT': os.environ.get('DB_PORT', '3306'),
+    #     'OPTIONS': {'charset': 'utf8mb4', 'init_command': 'SET default_storage_engine=InnoDB'}
+    # },
+    # XianDian
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get('DB_NAME', 'lqcharacter'),
-        'USER': os.environ.get('DB_USER', 'test'),
-        'PASSWORD': os.environ.get('DB_PASS', 'password'),
-        'HOST': os.environ.get('DB_HOST', '127.0.0.1'),
-        'PORT': os.environ.get('DB_PORT', '3306'),
+        'NAME': 'lqcharacter',
+        'USER': 'test',
+        'PASSWORD': 'password',
+        'HOST': 'localhost',
+        'PORT': '3306',
         'OPTIONS': {'charset': 'utf8mb4', 'init_command': 'SET default_storage_engine=InnoDB'}
-    },
-    # 'default2': {
-    #     'ENGINE': 'django.db.backends.mysql',
-    #     'NAME': 'lqcharacter',
-    #     'USER': 'root',
-    #     'PASSWORD': 'root',
-    #     'HOST': 'mysql_lqcharacter',
-    #     'PORT': '3306',
-    #     'OPTIONS': {'charset': 'utf8mb4', 'init_command': 'SET default_storage_engine=InnoDB'}
-    # }
+    }
 }
 
 

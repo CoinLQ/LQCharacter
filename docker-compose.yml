@@ -20,7 +20,7 @@
       MYSQL_DATABASE: lqcharacter
       MYSQL_PASSWORD: password
       #MYSQL_CHARSET: utf8
-      MYSQL_ROOT_HOST: '127.0.0.1'
+      MYSQL_ROOT_HOST: 'localhost'
     volumes:
       #- .docker-data/mysql:/var/lib/mysql
       - ./data/mysql/:/var/lib/mysql
