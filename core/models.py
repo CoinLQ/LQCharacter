@@ -139,7 +139,7 @@ class Page(models.Model):
     updated_at = models.DateTimeField(u'更新于', null=True, blank=True, auto_now=True)
     temp_image = models.FileField(u'临时图片', null=True, blank=True, help_text=u's3本地缓存', upload_to='tmp/')
     locked = models.SmallIntegerField(verbose_name=u'锁定状态', default=0, db_index=True)
-
+    text_info = models.TextField(u'文字信息' ,blank=True, null=True)
     class Meta:
         verbose_name = u'页'
         verbose_name_plural = u"页面管理"
