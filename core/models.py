@@ -161,7 +161,8 @@ class Page(models.Model):
     @property
     def get_image_url(self):
         # return os.path.join(settings.IMAGE_ROOT, self.image.name)
-        return "http://tripitaka.oss-cn-shanghai.aliyuncs.com/" + get_oss_by_name(self.image.name)
+        #return "http://tripitaka.oss-cn-shanghai.aliyuncs.com/" + get_oss_by_name(self.image.name)
+        return "https://s3.cn-north-1.amazonaws.com.cn/lqcharacters-images/" + self.image.name
 
     def __str__(self):
         return self.image_name
