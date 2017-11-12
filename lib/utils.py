@@ -11,6 +11,11 @@ class RedisKey(object):
     OCCUPANCY_TIMEOUT = 2 * 3600
 
 
+def page_id(user_id):
+    cache_key = "%s:u%s" % (RedisKey.RETRIEVE_RECT, user_id)
+    return cache.get(cache_key)
+
+
 def timeit(method):
     @functools.wraps(method)
     def timed(*args, **kw):
@@ -38,13 +43,15 @@ def retrieve_rects(user):
     else:
         page = page_klass.objects.get(pk=page_id)
         rects = page.rects.filter(op=0).all()
-        if not rects:
+        if ((not rects) or (page.locked > 1)):
             page = obtain_rect()
 
     if page:
         cache.set(cache_key, str(page.id), timeout=RedisKey.OCCUPANCY_TIMEOUT)
         rects = page.rects.filter(op=0).all()
-    return rects
+    
+    image_url = page and page.get_image_url
+    return rects, image_url
 
 
 def obtain_rect():

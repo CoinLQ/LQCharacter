@@ -139,7 +139,8 @@ class Page(models.Model):
     updated_at = models.DateTimeField(u'更新于', null=True, blank=True, auto_now=True)
     temp_image = models.FileField(u'临时图片', null=True, blank=True, help_text=u's3本地缓存', upload_to='tmp/')
     locked = models.SmallIntegerField(verbose_name=u'锁定状态', default=0, db_index=True)
-    text_info = models.TextField(u'文字信息' ,blank=True, null=True)
+    text_info = models.TextField(u'识别文字信息', blank=True, null=True)
+    
     class Meta:
         verbose_name = u'页'
         verbose_name_plural = u"页面管理"
@@ -179,7 +180,7 @@ class Page(models.Model):
             if m.op != 3:
                 rect = Rect.objects.create(page=self, x=m.x, y=m.y, width=int(m.width), height=int(m.height),
                                        confidence=m.confidence, op=m.op, hans=m.hans)
-                rect.feed_image2DB(image)
+                ## rect.feed_image2DB(image)
 
     @timeit
     def reformat_rects(self):
@@ -289,7 +290,7 @@ class Rect(models.Model):
 
     @property
     def inset_uri(self):
-        if not self.inset:
-            image = self.page._remote_image_stream()
-            self.feed_image2DB(image)
+        # if not self.inset:
+        #     image = self.page._remote_image_stream()
+        #     self.feed_image2DB(image)
         return "/files/get/?name=core.DBPicture/bytes/filename/mimetype/%s.png" % self.id

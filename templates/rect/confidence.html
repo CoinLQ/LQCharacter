@@ -1,15 +1,64 @@
 {% extends "app_base.html" %}
 
 {% block content %}
-<div class="section">
+<!-- template for the pieces component. -->
+<script type="text/x-template" id="pieces-template">
+  <div class="row">
+      <div class="col s4">
+          <svg :width="current_width" :height="height" @dblclick="add_rect($event)" :view-box.camel="viewbox" preserveAspectRatio="xMinYMin meet" class="shadow">
+              <image :xlink:href="imageurl" x="0" y="0" :height="height" :width="width" ref="page_image" />
+              <g>
+                <split-box
+                  v-for="(stat, index) in rects"
+                  :stat="stat"
+                  :key="stat.id" :choice="choice" :keyaction="keyaction">
+                </split-box>
+              </g>
+            </svg>
+      </div>
+      <div class="col s1">
+      </div>
+      <div class="col s4">
+          <div class="card hoverable">
+              <div class="card-image">
+                <img :src="current_img_datauri">
+                <span class="card-title">[[current && current.hans]]</span>
+              </div>
+              <div class="card-content">
+                  <span class="card-title activator grey-text text-darken-4">操作说明<i class="material-icons right">more_vert</i></span>
+              </div>
+              <div class="card-reveal">
+                  <span class="card-title grey-text text-darken-4">如何操作<i class="material-icons right">关闭</i></span>
+                  <span class="red-text">用键盘的上下方向，调整当前所选。</span>
+                  <p>用鼠标缩放，拖拽调整当前所选。</p>
+                  <span class="red-text">直接敲回车，四周放大两个像素。</span>
+                  <p>直接敲删除键，删除当前所选。</p>
+                  <p>鼠标双击，增加新的切分区域。</p>
+                  <span class="red-text">关掉对话框以后，此列所有调整好的切分区域将不再被处理。</span>
+              </div>
+              <div class="card-action">
+                <a @click="add_new()">新增</a>
+              </div>
+            </div>
+      </div>
+  </div>
+
+</script>
+
+<!-- template for the split box component. -->
+<script type="text/x-template" id="split-box-template">
+  <rect class='resize-drag' :x="stat.x" :y="stat.y" :width="stat.width" :height="stat.height" :stroke="strokeColor" fill="transparent" stroke-width="1" @click.prevent="choice(stat)"
+  @keyup="keyaction($event)" :key="stat.id"></rect>
+</script>
+
+<div id="split-rects" class="section">
     <div id="item-posts" class="row">
         <div class="item-sizer-small"></div>
-        <div v-for="(rect, index) in rects" class="item item-sizer-small">
-
+        <div v-for="(rect, index) in render_stats" class="item item-sizer-small">
             <div class="card">
                 <div class="card-image waves-effect waves-block waves-light">
-                    <a :href="detail_uri(rect)">
-                      <img :src="rect.inset_uri" alt="item-img">
+                    <a @click="choice(rect)">
+                      <img :src="rect.embed_inset  || 'default.jpg'" alt="item-img">
                     </a>
                     <h4 class="card-title text-shadow m-0">[[rect.hans]]None</h4>
                   </div>
@@ -19,7 +68,6 @@
                     <small class="right">
                       <a href="#!">
                         <span class="new badge red accent-2" :data-badge-caption="rect.confidence"></span>
-                        <span class="new badge cyan m-0" data-badge-caption="高丽藏"></span>
                       </a>
                     </small>
                     <small class="left"></small>
@@ -27,13 +75,22 @@
                 </div>
               </div>
         </div>
+        <div id="modal1" class="modal modal-fixed-footer">
+          <div class="modal-content">
+            <h4>第[[current && current.line_no]]列单字调整</h4>
+            <pieces :stats="same_line_rects" :width="width" :height="height" :imageurl="image_url" :current="current"></pieces>
+            
+          </div>
+          <div class="modal-footer">
+            <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">关闭</a>
+          </div>
+        </div>   
     </div>
     <div class="left">
-        <a class="waves-effect waves-light btn-large red">
-             <i class="right material-icons ">publish</i> 发布</a>
-        <a class="waves-effect waves-light btn-large ">
-             <i class="right material-icons">forward</i> 继续</a>
-    </div>      
+        <a class="waves-effect waves-light btn-large red" @click="all_done">
+             <i class="right material-icons ">publish</i> 全部提交</a>
+    </div>
+       
 </div>    
 {% endblock %}
 
@@ -47,53 +104,11 @@ type="text/javascript"></script>
 type="text/javascript"></script>
 <script src="{% static 'plugins/vendors/jquery.magnific-popup.min.js' %}"
 type="text/javascript"></script>
-
-
-<script type="text/javascript">
-var final_val="{{ final_val }}";
-window.vv=new Vue({
-  el: '#item-posts',
-  delimiters: ['[[', ']]'],
-  data: {
-    newLabel: '',
-    rects: [],
-    api_base: "/api/rects",
-    current_id: 0,
-    current: {}
-  },
-  mounted: function() {
-    this.loadRects();
-  },
-  methods: {
-    loadRects: function() {
-        var json_server_api = this.api_base + final_val;
-        this.$http.get(json_server_api).then(function (response) {
-            this.rects = response.data.models;
-            this.$nextTick(function(){
-              var containerBlog = $("#item-posts");
-              containerBlog.imagesLoaded(function() {
-                containerBlog.masonry({
-                  itemSelector: ".item",
-                  columnWidth: ".item-sizer-small",
-                })
-            })})
-            
-        }, function(error) {
-          // error callback
-          console.log('Fail，网址或相关错误！\n错误码：' + error.status + "\n结果：" + error.ok);
-        });
-    },
-    detail_uri: function(rect){
-      return "/rects/" + rect.id
-    },
-  }
-})
-
-  $(function() {
-
-      $('.lt-menu .menu-content').first().find('.m-submenu').first().addClass('m-active');
-
-  });
-</script>
+<script src="{% static 'plugins/utils/canvas2dataurl.js' %}"
+type="text/javascript"></script>
+<script src="{% static 'js/confidence/pieces-template.js' %}"
+type="text/javascript"></script>
+<script src="{% static 'js/confidence/app.js' %}"
+type="text/javascript"></script>
 
 {% endblock %}

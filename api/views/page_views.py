@@ -18,7 +18,7 @@ class PageViewSet(viewsets.ModelViewSet):
     queryset = Page.objects.all()
     permission_classes = (AllowAny,)
     filter_backends = (filters.DjangoFilterBackend,)
-    filter_fields = ('final',)
+    filter_fields = ('final', 'locked')
 
     def page_tobe_verify(self, request):
         batch_version = request.query_params['bvid']

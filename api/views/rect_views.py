@@ -8,7 +8,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.decorators import list_route, detail_route
 from rest_framework.response import Response
 from rest_framework import status
-from lib.utils import retrieve_rects
+from lib.utils import retrieve_rects, page_id
 
 
 class RectViewSet(viewsets.ModelViewSet):
@@ -43,10 +43,21 @@ class RectViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['get'], url_path='list')
     def rectlist(self, request, pk):
         user = request.user
-        queryset = retrieve_rects(user)
+        queryset, image_url = retrieve_rects(user)
         serializer = RectSerializer(queryset, many=True)
         return Response({
-            "models": serializer.data
+            "models": serializer.data,
+            "image_url": image_url,
+            "page_id": page_id(user.id)
+        })
+    
+    @detail_route(methods=['post'], url_path='done')
+    def confidence_done(self, request, pk):
+        page = Page.objects.get(pk=pk)
+        page.locked = 2
+        page.save()
+        return Response({
+            "page_id": pk
         })
 
     def create(self, request):
