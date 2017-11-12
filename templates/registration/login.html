@@ -17,14 +17,17 @@
 {% endblock %}
 
 {% block formbody %}
-    {% form %}
+    {% csrf_token %}
+    {% include form.template %}
+    {% comment %}{% form %}
         {% part form.username prefix %}<i class="material-icons prefix">account_box</i>{% endpart %}
         {% part form.password prefix %}<i class="material-icons prefix">lock</i>{% endpart %}
         {% attr form.keep_logged 'group' class append %}right-align{% endattr %}
-    {% endform %}
+    {% endform %}{% endcomment %}
 {% endblock %}
 
 {% block formbuttons %}
-    <a class="waves-effect waves-light btn-flat" href="/accounts/register">{% trans 'Register' %}</a>
-    <button class="waves-effect waves-light btn" type="submit">{% trans 'Log in' %}</button>
+    {% comment %}<a class="waves-effect waves-light btn-flat" href="/accounts/register">{% trans 'Register' %}</a>
+    <button class="waves-effect waves-light btn" type="submit">{% trans 'Log in' %}</button>{% endcomment %}
+    {% include form.buttons %}
 {% endblock %}

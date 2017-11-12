@@ -345,3 +345,6 @@ CONF_EMAIL = {
     'from': 'kangqiao182@126.com',
     'display_from': 'lqcharacter',
 }
+
+LOGOUT_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/'

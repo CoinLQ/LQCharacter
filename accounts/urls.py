@@ -18,7 +18,7 @@ common_form_template = 'registration/template_form.html'
 from accounts.forms import *
 
 urlpatterns = [
-        url(r'^register/$',
+    url(r'^register/$',
         #views.RegistrationView.as_view(),
         ExRegistrationView.as_view(),
         name='registration_register'),
@@ -34,7 +34,7 @@ urlpatterns = [
         name='auth_login'),
     url(r'^logout/$',
         auth_views.logout,
-        {'template_name': 'registration/logout.html', 'redirect_field_name': 'auth_login'},
+        {'template_name': 'registration/logout.html'},
         name='auth_logout'),
     url(r'^password/change/$',
         auth_views.password_change,

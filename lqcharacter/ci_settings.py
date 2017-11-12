@@ -51,3 +51,9 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
 ]
+
+#允许用户名和Email登录. 目前email没有唯一性, 暂不打开了.
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    #'accounts.backends.EmailBackend',
+)

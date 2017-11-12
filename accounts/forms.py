@@ -17,7 +17,7 @@ from registration.backends.simple.views import RegistrationView
 from accounts.urls import common_form_template
 
 class ExAuthenticationForm(AuthenticationForm):
-    keep_logged = forms.BooleanField(required=False, label="Keep me logged in")
+    keep_logged = forms.BooleanField(required=False, label="保持登录") #Keep me logged in
     template = Template('''
     {% form %}
         {% part form.username prefix %}<i class="material-icons prefix">account_box</i>{% endpart %}
@@ -27,7 +27,7 @@ class ExAuthenticationForm(AuthenticationForm):
     ''')
     buttons = Template('''
         {% load i18n %}
-        <a class="waves-effect waves-light btn-flat" href="{% url registration_register %}">{% trans 'Register' %}</a>
+        <a class="waves-effect waves-light btn-flat" href="{% url 'registration_register' %}">{% trans 'Register' %}</a>
         <button class="waves-effect waves-light btn" type="submit">{% trans 'Log in' %}</button>
     ''')
 

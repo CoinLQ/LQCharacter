@@ -52,6 +52,15 @@ msgstr ""
 msgid "registration"
 msgstr "注册"
 
+msgid "Register"
+msgstr "注册"
+
+msgid "REGISTER"
+msgstr "注册"
+
+msgid "Keep me logged in"
+msgstr "保持登录"
+
 #: templates/registration/activation_email.html:11
 #, python-format
 msgid ""
