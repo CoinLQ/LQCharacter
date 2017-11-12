@@ -5,7 +5,7 @@ from core.models import Rect, Page
 from rest_framework import filters
 from rest_framework.permissions import AllowAny
 
-from rest_framework.decorators import list_route, detail_route
+from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from rest_framework import status
 from lib.utils import retrieve_rects, page_id
@@ -50,7 +50,7 @@ class RectViewSet(viewsets.ModelViewSet):
             "image_url": image_url,
             "page_id": page_id(user.id)
         })
-    
+
     @detail_route(methods=['post'], url_path='done')
     def confidence_done(self, request, pk):
         page = Page.objects.get(pk=pk)

@@ -49,7 +49,7 @@ def retrieve_rects(user):
     if page:
         cache.set(cache_key, str(page.id), timeout=RedisKey.OCCUPANCY_TIMEOUT)
         rects = page.rects.filter(op=0).all()
-    
+
     image_url = page and page.get_image_url
     return rects, image_url
 

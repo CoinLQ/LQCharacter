@@ -14,7 +14,6 @@ import urllib.request
 import functools
 import db_file_storage
 from PIL import Image, ImageFont, ImageDraw
-from oss import get_oss_by_name
 from django.core.files.base import ContentFile
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -140,7 +139,7 @@ class Page(models.Model):
     temp_image = models.FileField(u'临时图片', null=True, blank=True, help_text=u's3本地缓存', upload_to='tmp/')
     locked = models.SmallIntegerField(verbose_name=u'锁定状态', default=0, db_index=True)
     text_info = models.TextField(u'识别文字信息', blank=True, null=True)
-    
+
     class Meta:
         verbose_name = u'页'
         verbose_name_plural = u"页面管理"
@@ -162,7 +161,8 @@ class Page(models.Model):
     @property
     def get_image_url(self):
         # return os.path.join(settings.IMAGE_ROOT, self.image.name)
-        #return "http://tripitaka.oss-cn-shanghai.aliyuncs.com/" + get_oss_by_name(self.image.name)
+        # from oss import get_oss_by_name
+        # return "http://tripitaka.oss-cn-shanghai.aliyuncs.com/" + get_oss_by_name(self.image.name)
         return "https://s3.cn-north-1.amazonaws.com.cn/lqcharacters-images/" + self.image.name
 
     def __str__(self):
@@ -173,14 +173,16 @@ class Page(models.Model):
         self.rects.all().delete()
         json_str = base64.b64decode(self.c_page.first().cut_data)
         cut_result = json.loads(json_str.decode('utf-8'))
-        # m = DotMap(cut_result[0])
-        image = self._remote_image_stream()
+        # image = self._remote_image_stream()
         for _m in cut_result:
             m = DotMap(_m)
             if m.op != 3:
-                rect = Rect.objects.create(page=self, x=m.x, y=m.y, width=int(m.width), height=int(m.height),
-                                       confidence=m.confidence, op=m.op, hans=m.hans)
-                ## rect.feed_image2DB(image)
+                # rect = Rect.objects.create(page=self, x=m.x, y=m.y, width=int(m.width),
+                #               height=int(m.height),confidence=m.confidence, op=m.op, hans=m.hans)
+                # rect.feed_image2DB(image)
+                Rect.objects.create(page=self, x=m.x, y=m.y, width=int(m.width), height=int(m.height),
+                                    confidence=m.confidence, op=m.op, hans=m.hans)
+
 
     @timeit
     def reformat_rects(self):
