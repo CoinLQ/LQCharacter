@@ -48,7 +48,7 @@ docker-compose exec web_lqcharacter /usr/local/bin/python manage.py migrate
 ```
   python manage.py makemigrations
   python manage.py migrate
-  python manage.py loaddata ./fixtures/core_fixture.json
+  python manage.py loaddata ./fixtures/initial_data.json
 ```
 ### 应用环境设置(可能)
 把下列环境变量加入你的rc文件中，

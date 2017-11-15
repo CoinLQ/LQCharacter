@@ -12,6 +12,7 @@ from accounts.mail import send_mail
 
 CONF_EMAIL = settings.CONF_EMAIL
 
+
 def send_html_mail(to, subject, content):
     send_mail(
         CONF_EMAIL['smtp_host'],
@@ -25,6 +26,3 @@ def send_html_mail(to, subject, content):
         'html',
         CONF_EMAIL['display_from']
     )
-
-
-

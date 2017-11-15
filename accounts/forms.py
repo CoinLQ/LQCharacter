@@ -8,16 +8,17 @@ Created by zhaopan on 2017/10/30.
 __author__ = 'zhaopan'
 
 from django.template import Template
-from material import Layout, Row, Column, Fieldset, Span2, Span3, Span5, Span6, Span10
-from django import forms
+from material import Layout, Row
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.forms import PasswordChangeForm
 from registration.forms import RegistrationForm
 from registration.backends.simple.views import RegistrationView
 from accounts.urls import common_form_template
+from django import forms
+
 
 class ExAuthenticationForm(AuthenticationForm):
-    keep_logged = forms.BooleanField(required=False, label="保持登录") #Keep me logged in
+    keep_logged = forms.BooleanField(required=False, label="保持登录")  # Keep me logged in
     template = Template('''
     {% form %}
         {% part form.username prefix %}<i class="material-icons prefix">account_box</i>{% endpart %}
@@ -27,7 +28,8 @@ class ExAuthenticationForm(AuthenticationForm):
     ''')
     buttons = Template('''
         {% load i18n %}
-        <a class="waves-effect waves-light btn-flat" href="{% url 'registration_register' %}">{% trans 'Register' %}</a>
+        <a class="waves-effect waves-light btn-flat"
+            href="{% url 'registration_register' %}">{% trans 'Register' %}</a>
         <button class="waves-effect waves-light btn" type="submit">{% trans 'Log in' %}</button>
     ''')
 
@@ -50,9 +52,11 @@ class ExRegistrationForm(RegistrationForm):
         <button type="submit" name="_submit" class="btn btn-primary btn-lg">{% trans 'Submit' %}</button>
     ''')
 
+
 class ExRegistrationView(RegistrationView):
     form_class = ExRegistrationForm
     template_name = common_form_template
+
 
 class ExPasswordChangeForm(PasswordChangeForm):
     layout = Layout('old_password', Row('new_password1', 'new_password2'))

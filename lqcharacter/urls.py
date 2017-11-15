@@ -16,11 +16,8 @@ Including another URLconf
 """
 from django.conf import settings
 from django.conf.urls import url, include
-from django.conf.urls.static import static
-from django.contrib import admin
-from django.views.generic import TemplateView
-from django.views.static import serve #处理静态文件
-from rest_framework import routers
+
+from django.views.static import serve  # 处理静态文件
 import xadmin
 # xadmin.autodiscover()
 
@@ -34,10 +31,11 @@ urlpatterns = [
     url(r'^pages/', include("core.page.urls"), name='pages'),
     url(r'^rects/', include("core.rect.urls"), name='rects'),
     url(r'^api/', include("api.urls")),
-    #url(r'^accounts/', include('registration.backends.simple.urls')),
+    # url(r'^accounts/', include('registration.backends.simple.urls')),
     url(r'^accounts/', include('accounts.urls')),
     url(r'^files/', include('db_file_storage.urls')),
 ]
+
 
 # 全局 404 处理函数
 def page_not_found(request):
@@ -46,12 +44,14 @@ def page_not_found(request):
     response.status_code = 404
     return response
 
+
 # 全局 500 处理函数
 def page_error(request):
     from django.shortcuts import render_to_response
     response = render_to_response('500.html', {})
     response.status_code = 500
     return response
+
 
 # 全局 404 页面配置（django 会自动调用这个变量）
 handler404 = 'setting.urls.page_not_found'

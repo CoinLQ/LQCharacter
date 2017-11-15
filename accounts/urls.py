@@ -10,16 +10,14 @@ __author__ = 'zhaopan'
 from django.conf.urls import url
 from django.contrib.auth import views as auth_views
 from django.views.generic.base import TemplateView
+from accounts.forms import ExRegistrationView, ExAuthenticationForm, ExPasswordChangeForm
 
-from django.template import Template
-
-from registration.backends.simple import views
 common_form_template = 'registration/template_form.html'
-from accounts.forms import *
+
 
 urlpatterns = [
     url(r'^register/$',
-        #views.RegistrationView.as_view(),
+        # views.RegistrationView.as_view(),
         ExRegistrationView.as_view(),
         name='registration_register'),
     url(r'^register/closed/$',
@@ -38,7 +36,7 @@ urlpatterns = [
         name='auth_logout'),
     url(r'^password/change/$',
         auth_views.password_change,
-        #{'post_change_redirect': 'auth_password_change_done'},
+        # {'post_change_redirect': 'auth_password_change_done'},
         {'post_change_redirect': 'auth_login',
          'password_change_form': ExPasswordChangeForm,
          'template_name': common_form_template},
@@ -63,7 +61,3 @@ urlpatterns = [
         auth_views.password_reset_done,
         name='auth_password_reset_done'),
 ]
-
-
-
-
