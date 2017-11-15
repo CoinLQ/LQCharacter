@@ -10,9 +10,11 @@ __author__ = 'zhaopan'
 from django.conf.urls import url
 from django.contrib.auth import views as auth_views
 from django.views.generic.base import TemplateView
-from accounts.forms import ExRegistrationView, ExAuthenticationForm, ExPasswordChangeForm
 
 common_form_template = 'registration/template_form.html'
+from accounts.forms import ExRegistrationView, ExAuthenticationForm, ExPasswordChangeForm, common_form_template
+
+
 
 
 urlpatterns = [

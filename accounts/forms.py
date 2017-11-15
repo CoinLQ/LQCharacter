@@ -17,6 +17,7 @@ from accounts.urls import common_form_template
 from django import forms
 
 
+
 class ExAuthenticationForm(AuthenticationForm):
     keep_logged = forms.BooleanField(required=False, label="保持登录")  # Keep me logged in
     template = Template('''
