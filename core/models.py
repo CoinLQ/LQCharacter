@@ -135,8 +135,9 @@ class Page(models.Model):
     image = models.ForeignKey(OPage)
     final = models.SmallIntegerField(verbose_name=u'校对情况', choices=FinalStatus.STATUS, default=0)
     created_at = models.DateTimeField(u'创建于', null=True, blank=True, auto_now_add=True)
-    updated_at = models.DateTimeField(u'更新于', null=True, blank=True, auto_now=True)
     temp_image = models.FileField(u'临时图片', null=True, blank=True, help_text=u's3本地缓存', upload_to='tmp/')
+    updated_at = models.DateTimeField(u'更新于', null=True, blank=True, auto_now=True)
+    
     locked = models.SmallIntegerField(verbose_name=u'锁定状态', default=0, db_index=True)
     text_info = models.TextField(u'识别文字信息', blank=True, null=True)
 
@@ -161,8 +162,8 @@ class Page(models.Model):
     @property
     def get_image_url(self):
         # return os.path.join(settings.IMAGE_ROOT, self.image.name)
-        # from oss import get_oss_by_name
-        # return "http://tripitaka.oss-cn-shanghai.aliyuncs.com/" + get_oss_by_name(self.image.name)
+        #from oss import get_oss_by_name
+        #return "http://tripitaka.oss-cn-shanghai.aliyuncs.com/" + get_oss_by_name(self.image.name)
         return "https://s3.cn-north-1.amazonaws.com.cn/lqcharacters-images/" + self.image.name
 
     def __str__(self):
@@ -171,6 +172,8 @@ class Page(models.Model):
     @timeit
     def rebuild_rect(self):
         self.rects.all().delete()
+        if self.c_page.first().cut_data.strip() == '':
+            return
         json_str = base64.b64decode(self.c_page.first().cut_data)
         cut_result = json.loads(json_str.decode('utf-8'))
         # image = self._remote_image_stream()
@@ -180,6 +183,8 @@ class Page(models.Model):
                 # rect = Rect.objects.create(page=self, x=m.x, y=m.y, width=int(m.width),
                 #               height=int(m.height),confidence=m.confidence, op=m.op, hans=m.hans)
                 # rect.feed_image2DB(image)
+                if (int(m.width) < 0) or (int(m.height) < 0):
+                    continue
                 Rect.objects.create(page=self, x=m.x, y=m.y, width=int(m.width), height=int(m.height),
                                     confidence=m.confidence, op=m.op, hans=m.hans)
 

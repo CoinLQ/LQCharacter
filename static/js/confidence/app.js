@@ -1,3 +1,21 @@
+function getCookie(name) {
+  let arr,
+      reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)")
+  if(arr=document.cookie.match(reg)) {
+    return decodeURIComponent(arr[2])
+  }
+}
+
+// 设置 POST 请求时 的 data 格式
+//Vue.http.options.emulateJSON = true
+
+// 设置 X-CSRFToken
+Vue.http.interceptors.push(function(request, next) {
+  //request.method = 'POST'
+  request.headers.set('X-CSRFToken', getCookie('csrftoken'))
+  next()
+})
+
 window.vv=new Vue({
     el: '#split-rects',
     delimiters: ['[[', ']]'],
@@ -40,7 +58,10 @@ window.vv=new Vue({
         if (!this.current)
           return []
         return _.filter(this.stats, {line_no: this.current.line_no })
-      }
+      },
+      done_stats: function() {
+        return _.reject(this.stats,{op: 0});
+      },
     },
     methods: {
       loadRects: function() {

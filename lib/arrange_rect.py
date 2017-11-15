@@ -22,7 +22,10 @@ class ArrangeRect(object):
     @classmethod
     def resort_rects_from_qs(cls, queryset):
         cut_result = list(dict(qs) for qs in queryset)
-        mean_width = int(np.mean(list(map(lambda X: int(X['width']), cut_result))))
+        if not cut_result:
+            mean_width = 0
+        else:
+            mean_width = int(np.mean(list(map(lambda X: int(X['width']), cut_result))))
         columns, m = dict(), 0
         column_len = dict()
         while cut_result:

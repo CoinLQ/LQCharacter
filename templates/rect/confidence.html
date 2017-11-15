@@ -52,6 +52,12 @@
 </script>
 
 <div id="split-rects" class="section">
+    <div class="col s12 m9">
+        <div class="collection">
+          <a href="#!" class="collection-item">待校对区域总数<span class="new badge" data-badge-caption="个">[[render_stats.length]]</span></a>
+          <a href="#!" class="collection-item">已完成数<span class="badge" data-badge-caption="个">[[done_stats.length]]</span></a>
+        </div>
+      </div>
     <div id="item-posts" class="row">
         <div class="item-sizer-small"></div>
         <div v-for="(rect, index) in render_stats" class="item item-sizer-small">
@@ -60,7 +66,7 @@
                     <a @click="choice(rect)">
                       <img :src="rect.embed_inset  || 'default.jpg'" alt="item-img">
                     </a>
-                    <h4 class="card-title text-shadow m-0">[[rect.hans]]None</h4>
+                    <h4 class="card-title text-shadow m-0">[[rect.hans]]</h4>
                   </div>
                 <div class="card-content">
                   <a href="#!"></a>

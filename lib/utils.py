@@ -51,7 +51,7 @@ def retrieve_rects(user):
         rects = page.rects.filter(op=0).all()
 
     image_url = page and page.get_image_url
-    return rects, image_url
+    return page.rects.all(), image_url
 
 
 def obtain_rect():
