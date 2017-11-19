@@ -1,0 +1,61 @@
+#version: '3'
+#services:
+  neo4j:
+    image: neo4j:latest
+    volumes:
+      #- ./.docker-data/neo4j:/data
+      - ./data/neo4j:/data
+    environment:
+      - NEO4J_AUTH=none
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+
+  mysql-lqcharacter:
+    restart: always
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: test
+      MYSQL_DATABASE: lqcharacter
+      MYSQL_PASSWORD: password
+      #MYSQL_CHARSET: utf8
+      MYSQL_ROOT_HOST: 'localhost'
+    volumes:
+      #- .docker-data/mysql:/var/lib/mysql
+      - ./data/mysql/:/var/lib/mysql
+      - ./conf/mysql/:/etc/mysql/conf.d
+      - ./data/log/:/var/log/mysql
+    ports:
+      - "3306:3306"
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --init-connect='SET NAMES utf8mb4;' --innodb-flush-log-at-trx-commit=0
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
+  nginx-lqcharacter:
+    restart: always
+    image: nginx
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./conf/nginx/lqcharacter_nginx.conf:/etc/nginx/conf.d/lqcharacter_nginx.conf
+      - /www/lqhansp/media/:/LQCharacter/media
+      - /www/lqhansp/static/:/LQCharacter/static
+    volumes_from:
+      - web_lqcharacter
+    links:
+      - web_lqcharacter:web_lqcharacter
+
+  web_lqcharacter:
+    restart: always
+    build: .
+    ports:
+      - "8001:8001"
+    volumes:
+      - .:/LQCharacter
+    links:
+      - mysql-lqcharacter:mysql_lqcharacter
+    command: uwsgi -s :8001 -w lqcharacter.wsgi -p 3
