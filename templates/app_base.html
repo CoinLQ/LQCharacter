@@ -1,21 +1,21 @@
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="msapplication-tap-highlight" content="no">
-<meta name="description" content="coinlq">
-<meta name="keywords" content="longquan">
-<title>切分系统</title>
-<link rel="shortcut  icon" type="image/x-icon" href="/static/images/favicon.ico" media="screen"  />
-<!-- <link href="/static/css/materialize.css" rel="stylesheet" type="text/css" /> -->
-<!-- <link href="/static/css/sweetalert.css" rel="stylesheet" type="text/css" /> -->
-<!-- <link href="/static/css/base.css" rel="stylesheet" type="text/css" /> -->
-<link href="/static/css/themes/collapsible-menu/materialize.css" type="text/css" rel="stylesheet">
-<link href="/static/css/themes/collapsible-menu/style.css" type="text/css" rel="stylesheet">
-<link href="/static/css/flag-icon/css/flag-icon.min.css" type="text/css" rel="stylesheet">
-<link href="/static/css/perfect-scrollbar.css" type="text/css" rel="stylesheet">
-<link href="/static/css/base.css" type="text/css" rel="stylesheet">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="msapplication-tap-highlight" content="no">
+    <meta name="description" content="coinlq">
+    <meta name="keywords" content="longquan">
+    <title>切分系统</title>
+    <link rel="shortcut  icon" type="image/x-icon" href="/static/images/favicon.ico" media="screen"/>
+    <!-- <link href="/static/css/materialize.css" rel="stylesheet" type="text/css" /> -->
+    <!-- <link href="/static/css/sweetalert.css" rel="stylesheet" type="text/css" /> -->
+    <!-- <link href="/static/css/base.css" rel="stylesheet" type="text/css" /> -->
+    <link href="/static/css/themes/collapsible-menu/materialize.css" type="text/css" rel="stylesheet">
+    <link href="/static/css/themes/collapsible-menu/style.css" type="text/css" rel="stylesheet">
+    <link href="/static/css/flag-icon/css/flag-icon.min.css" type="text/css" rel="stylesheet">
+    <link href="/static/css/perfect-scrollbar.css" type="text/css" rel="stylesheet">
+    <link href="/static/css/base.css" type="text/css" rel="stylesheet">
 </head>
 <body>
 <!-- Start Page Loading -->
@@ -26,50 +26,61 @@
     </div>
 <!-- End Page Loading -->
 <header id="header" class="page-topbar">
- {% include "dashboard/includes/header.html" %}      
+    {% include "dashboard/includes/header.html" %}
 </header>
 <div id="main">
-                <!-- START WRAPPER -->
-                <div class="wrapper">
-                  <!-- START LEFT SIDEBAR NAV-->
-                  <aside id="left-sidebar-nav" class="nav-expanded nav-lock nav-collapsible">
-                                <div class="brand-sidebar">
-                                                <h1 class="logo-wrapper">
-                                                  <a href="#" class="brand-logo darken-1">
-                                                                <img src="/static/images/75E31347-270B-403D-9CD7-B155A8B50F91@2x.png"></img>
-                                                    
-                                                    <span class="logo-text hide-on-med-and-down">切分系统</span>
-                                                  </a>
-                                                  <a href="#" class="navbar-toggler">
-                                                    <i class="material-icons">radio_button_checked</i>
-                                                  </a>
-                                                </h1>
-                                              </div>
-                                              <ul id="slide-out" class="side-nav fixed leftside-navigation">
-                                                
-                                                            
-                                                            {% include "dashboard/includes/custom_menu.html" %}  
-                                                            <div class="copyright">©2017 LQS All Rights Reserved.</div>     
-                                                </ul>
-                 </aside>
-                 <section id="content">
-                        <!--start container-->
-                        <div class="container">
-     
-                                        <div class="main-header"><p>{{ page_title }}
-                                                        {% block title %}
-                                                        {% endblock %}</p></div>
-                                                        <div class="main-divide"></div>
-                                                        {% block content %}
-                                                        {% endblock %}
-                                                        </div>
-                        </div>
-</section>
+    <!-- START WRAPPER -->
+    <div class="wrapper">
+        <!-- START LEFT SIDEBAR NAV-->
+        <aside id="left-sidebar-nav" class="nav-expanded nav-lock nav-collapsible">
+            <div class="brand-sidebar">
+                <h1 class="logo-wrapper">
+                    <a href="#" class="brand-logo darken-1">
+                        <img src="/static/images/75E31347-270B-403D-9CD7-B155A8B50F91@2x.png"></img>
+
+                        <span class="logo-text hide-on-med-and-down">切分系统</span>
+                    </a>
+                    <a href="#" class="navbar-toggler">
+                        <i class="material-icons">radio_button_checked</i>
+                    </a>
+                </h1>
+            </div>
+            <ul id="slide-out" class="side-nav fixed leftside-navigation">
+
+
+                {% include "dashboard/includes/custom_menu.html" %}
+                <div class="copyright">©2017 LQS All Rights Reserved.</div>
+            </ul>
+        </aside>
+        <section id="content">
+            <!--start container-->
+            <div class="container">
+
+                <div class="main-header">
+                    <p>
+                        {{ page_title }}
+                        {% block title %}
+                        {% endblock %}
+                    </p>
+                    <div id="page-header">
+                        <!--页面导航-->
+                    </div>
+                </div>
+                <div class="main-divide"></div>
+                    {% block content %}
+                    {% endblock %}
+                <div id="page-content">
+                    <!--内容区域-->
+                </div>
+            </div>
+    </div>
+    </section>
 </div>
 
 
 {% load static %}
 {% get_static_prefix as STATIC_PREFIX %}
+
 <script src="{% static 'plugins/jquery/jquery-latest.js' %}"
         type="text/javascript"></script>
 <script src="{% static 'plugins/vue/dist/vue.min.js' %}"
@@ -88,10 +99,51 @@
         type="text/javascript"></script>
 <script src="{% static 'plugins/custom.js' %}"
         type="text/javascript"></script>
-    </body>
+<script src="{% static 'js/LQRouter.js' %}"
+        type="text/javascript"></script>
 
-   {% block base_foot_script %}
+<script type="text/javascript">
+    jQuery(function($){
+        new LQRouter({
+            contentSelector: '#page-content',
+            navSelector: '#page-header',
+            beforeUpdate: function(page){
+                $('#loadingModal').nextAll().remove();
+            },
+            afterUpdate: function(page){
+                var ele = $('.m-submenu a[data-href="'+page.url+'"]').parent();
+                $('div.m-active').removeClass('m-active');
+                ele.addClass('m-active');
+                {% comment %}if(!ele.parent().parent('li').hasClass('active')){
+                    ele.parent().parent('li').addClass('active').children('ul').collapse('show');
+                }{% endcomment %}
+            }
+        });
+    });
 
-   {% endblock %}
+    function updateMainContainer(url, title, subtitle) {
+        LQRouter.push(url, subtitle, title);
+    }
+
+    $('[data-href]').click(function () {
+        var url = $(this).attr('data-href');
+        var title = $(this).attr('data-title');
+        var subtitle = $(this).attr('data-subtitle');
+
+        updateMainContainer(url, title, subtitle);
+    });
+
+    function showLoading(){
+        //$('#loading').jqxLoader('open');
+    }
+    function hideLoading(){
+        //$('#loading').jqxLoader('close');
+    }
+</script>
+
+</body>
+{% block base_foot_script %}
+
+{% endblock %}
 
 </html>
