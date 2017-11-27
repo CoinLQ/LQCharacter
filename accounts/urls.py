@@ -7,14 +7,14 @@ Created by zhaopan on 2017/10/30.
 
 __author__ = 'zhaopan'
 
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.contrib.auth import views as auth_views
 from django.views.generic.base import TemplateView
 
 common_form_template = 'registration/template_form.html'
 from accounts.forms import ExRegistrationView, ExAuthenticationForm, ExPasswordChangeForm, common_form_template
-
-
+from django.contrib.auth.decorators import login_required
+from .views import UserProfileChange
 
 
 urlpatterns = [
@@ -62,4 +62,6 @@ urlpatterns = [
     url(r'^password/reset/done/$',
         auth_views.password_reset_done,
         name='auth_password_reset_done'),
+    url(r'^profile/$', login_required(UserProfileChange.as_view()), name='user_profile_change'),
+    
 ]

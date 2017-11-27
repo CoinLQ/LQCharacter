@@ -15,6 +15,8 @@ from registration.forms import RegistrationForm
 from registration.backends.simple.views import RegistrationView
 from accounts.urls import common_form_template
 from django import forms
+from core.models import Profile
+from django.forms import ModelForm
 
 
 
@@ -69,6 +71,23 @@ class ExPasswordChangeForm(PasswordChangeForm):
         {% part form.new_password2 prefix %}<i class="material-icons prefix">lock</i>{% endpart %}
     {% endform %}
     """)
+    buttons = Template('''
+        {% load i18n %}
+        <button type="submit" name="_submit" class="btn btn-primary btn-lg">{% trans 'Submit' %}</button>
+    ''')
+
+
+class UserProfileChangeForm(ModelForm):
+    error_css_class = 'error'
+    required_css_class = 'required'
+    
+    class Meta:
+        model = Profile
+        fields = ('sex', 'birthday', 'phone', 'id_num')
+
+    layout = Layout(Row('sex', 'birthday'),
+                    Row('phone', 'id_num'),)
+    
     buttons = Template('''
         {% load i18n %}
         <button type="submit" name="_submit" class="btn btn-primary btn-lg">{% trans 'Submit' %}</button>

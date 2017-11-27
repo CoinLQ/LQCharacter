@@ -1,0 +1,20 @@
+{% extends "app_base.html" %}
+{% load material_form %}
+{% load i18n %} 
+
+{% block title %}个人信息{% endblock %}
+
+{% block content%} 
+
+{% if form.errors %}
+<p class="error">Please correct the errors below.</p>
+{% endif %}
+<div class="row">
+    <div class="col s12 m6 l8 offset-l2 offset-m4">
+        <form method="POST">
+            {% csrf_token %} {% form form=form %}{% endform %} {% include form.buttons %}
+        </form>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 
 from api.serializers import RectSerializer
-from core.models import Rect, Page
+from core.models import Rect, Page, RectSubscription
 from rest_framework import filters
 from rest_framework.permissions import AllowAny
 
@@ -9,6 +9,7 @@ from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from rest_framework import status
 from lib.utils import retrieve_rects, page_id
+from django.db.utils import IntegrityError
 
 
 class RectViewSet(viewsets.ModelViewSet):
@@ -60,6 +61,12 @@ class RectViewSet(viewsets.ModelViewSet):
             "page_id": pk
         })
 
+    def _rect_delete_changelog(self, profile, rect):
+        try:
+            RectSubscription.objects.create(profile=profile, rect=rect, op='delete')
+        except IntegrityError as e:
+            pass
+
     def create(self, request):
         page_id = request.data['page_id']
         serializer = RectSerializer(data=request.data)
@@ -69,6 +76,7 @@ class RectViewSet(viewsets.ModelViewSet):
             rect.page = page
             rect.save()
             page.reformat_rects()
+            RectSubscription.rect_creation_log(request.user.profile, rect)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -79,10 +87,12 @@ class RectViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
             serializer.save()
             rect.page.reformat_rects()
+            RectSubscription.rect_modification_log(request.user.profile, rect)
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk, format=None):
         rect = self.get_object(pk)
+        RectSubscription.rect_deletion_log(request.user.profile, rect)
         rect.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

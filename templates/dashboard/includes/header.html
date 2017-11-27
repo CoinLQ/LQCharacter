@@ -4,10 +4,10 @@
     <div class="navbar-fixed">
       <nav class="navbar-color gradient-46deg-purple-deep-orange gradient-shadow">
         <div class="nav-wrapper">
-          <div class="header-search-wrapper hide-on-med-and-down sideNav-lock">
+          <!-- <div class="header-search-wrapper hide-on-med-and-down sideNav-lock">
             <i class="material-icons">search</i>
             <input type="text" name="Search" class="header-search-input z-depth-2" placeholder="{% trans "Explore Sutta" %}">
-          </div>
+          </div> -->
           <ul class="right hide-on-med-and-down">
               
 
@@ -28,8 +28,8 @@
                   <i class="material-icons">face</i> {% trans "Change password" %}</a>
               </li>
               <li>
-                <a href="#" class="grey-text text-darken-1">
-                  <i class="material-icons">settings</i> {% trans "Settings" %}</a>
+                <a href="{% url 'user_profile_change' %}" class="grey-text text-darken-1">
+                  <i class="material-icons">settings</i> {% trans "Profile" %}</a>
               </li>
               <li>
                 <a href="#" class="grey-text text-darken-1">

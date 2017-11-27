@@ -1,7 +1,7 @@
 FROM python:3.6
 ENV PYTHONUNBUFFERED 1
 
-MAINTAINER kangqiao <kangqiao610@gmail.com>
+LABEL maintainer="kangqiao <kangqiao610@gmail.com>"
 
 ADD ./requirements.txt /tmp/requirements.txt
 

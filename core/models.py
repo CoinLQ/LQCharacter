@@ -5,6 +5,7 @@ from django.db import models
 
 from django.contrib.auth.models import User
 from django.template import defaultfilters
+from django.dispatch import receiver
 import base64
 import json
 import os
@@ -24,9 +25,15 @@ from lqcharacter import settings
 from django.db import transaction
 from lib.arrange_rect import ArrangeRect
 from lib.utils import timeit
+from django.utils.timezone import now
+
 # [Django API](https://docs.djangoproject.com/en/1.11/)
 
 db_storage = db_file_storage.storage.DatabaseFileStorage()
+
+
+def default_today():
+    return now().today()
 
 
 def iterable(cls):
@@ -300,3 +307,76 @@ class Rect(models.Model):
         #     image = self.page._remote_image_stream()
         #     self.feed_image2DB(image)
         return "/files/get/?name=core.DBPicture/bytes/filename/mimetype/%s.png" % self.id
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(User)
+    sex_type = (('male', u'男'), ('female', u'女'))
+    sex = models.CharField(u"性别", choices=sex_type, default='male', max_length=32)
+    birthday = models.DateField(u'出生日期', max_length=64, blank=True, null=True, help_text="格式yyyy-mm-dd")
+    phone = models.BigIntegerField(u'手机号', blank=True, null=True)
+    id_num = models.CharField(u'身份证号', blank=True, null=True, max_length=64)
+    is_active = models.BooleanField(default=True)
+    date_joined = models.DateTimeField(blank=True, null=True, auto_now_add=True)
+    rects = models.ManyToManyField(Rect, through='RectSubscription')
+    pages = models.ManyToManyField(Page, through='PageSubscription')
+
+    @property
+    def today_rects(self):
+        return self.rects.filter(date=default_today()).all()
+
+    @property
+    def today_page(self):
+        return self.pages.filter(date=default_today()).all()
+
+
+class RectSubscription(models.Model):
+    profile = models.ForeignKey(Profile, db_constraint=True, db_index=False)
+    rect = models.ForeignKey(Rect, db_constraint=True, db_index=False, null=True, on_delete=models.SET_NULL)
+    date = models.DateField(default=default_today)
+    op_type = (('add', u'增加'), ('modify', u'修改'), ('delete', u'删除'))
+    op = models.CharField(u"操作类型", choices=op_type, default='modify', max_length=8)
+
+    class Meta:
+        db_table = 'rects_user_profile_rects'
+        index_together = (("profile", "date", "rect"),)
+
+    def __str__(self):
+        return u'Subscription for %s to %s' % (
+            self.profile.user.email, self.rect.id)
+
+    @classmethod
+    def rect_creation_log(cls, profile, rect):
+        if not RectSubscription.objects.filter(profile=profile, rect=rect, date=default_today):
+            RectSubscription.objects.create(profile=profile, rect=rect, op='add')
+
+    @classmethod
+    def rect_modification_log(cls, profile, rect):
+        if not RectSubscription.objects.filter(profile=profile, rect=rect, date=default_today):
+            RectSubscription.objects.create(profile=profile, rect=rect, op='modify')
+
+    @classmethod
+    def rect_deletion_log(cls, profile, rect):
+        RectSubscription.objects.create(profile=profile, rect=rect, op='delete')
+
+
+class PageSubscription(models.Model):
+    profile = models.ForeignKey(Profile, db_constraint=True, db_index=False)
+    page = models.ForeignKey(Page, db_constraint=True, db_index=False)
+    date = models.DateField(default=default_today)
+    op_type = (('add', u'增加'), ('modify', u'修改'), ('delete', u'删除'))
+    op = models.CharField(u"操作类型", choices=op_type, default='modify', max_length=8)
+
+    class Meta:
+        db_table = 'pages_user_profile_pages'
+        unique_together = (("profile", "page", "date"),)
+
+    def __str__(self):
+        return u'Subscription for %s to %s' % (
+            self.profile.user.email, self.page.image_name)
+
+
+@receiver(models.signals.post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
