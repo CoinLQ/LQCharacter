@@ -10,6 +10,14 @@ class RedisKey(object):
     RETRIEVE_RECT_P2 = 'retrieve_rect_p2'
     OCCUPANCY_TIMEOUT = 2 * 3600
 
+    RETRIEVE_SPLTASK = 'retrieve_spl_task'
+    TASK_OCCUPANCY_TIMEOUT = 6 * 24 * 3600
+
+
+def task_id(user_id):
+    cache_key = "%s:u%s" % (RedisKey.RETRIEVE_SPLTASK, user_id)
+    return cache.get(cache_key)
+
 
 def page_id(user_id):
     cache_key = "%s:u%s" % (RedisKey.RETRIEVE_RECT, user_id)
@@ -74,3 +82,38 @@ def clear_retrieve_rect_keys():
     cache.delete_pattern("%s:*" % RedisKey.RETRIEVE_RECT)
     page_klass = ContentType.objects.get(app_label='core', model='page').model_class()
     page_klass.objects.filter(locked=1).update(locked=0)
+
+#  ##########
+
+
+def retrieve_split_task(user):
+    user_id = user.id
+    rects = ()
+    cache_key = "%s:u%s" % (RedisKey.RETRIEVE_SPLTASK, user_id)
+    splittask_klass = ContentType.objects.get(app_label='core', model='splittask').model_class()
+    splittask_id = cache.get(cache_key)
+    if not splittask_id:
+        task = obtain_split_task(user)
+    else:
+        task = splittask_klass.objects.get(pk=splittask_id)
+        rects = task.rects.filter(op=0).all()
+        if ((not rects) or (task.locked > 1)):
+            task = obtain_split_task(user)
+
+    if task:
+        cache.set(cache_key, str(task.id), timeout=RedisKey.TASK_OCCUPANCY_TIMEOUT)
+        rects = task.rects.filter(op=0).all()
+
+    return rects
+
+
+def obtain_split_task(user):
+    splittask_klass = ContentType.objects.get(app_label='core', model='splittask').model_class()
+    with cache.lock(RedisKey.RETRIEVE_SPLTASK):
+        splittask = splittask_klass.objects.filter(locked=0).order_by('confidence').first()
+        if splittask:
+            splittask.locked = 1
+            splittask.owner = user
+            splittask.save()
+    return splittask
+

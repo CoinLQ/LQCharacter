@@ -207,7 +207,7 @@ class Page(models.Model):
     def _remote_image_stream(self):
         opener = urllib.request.build_opener()
         # AWS S3 Private Resource snippet, someday here should to be.
-        opener.addheaders = [('Authorization', 'AWS AKIAIOSFODNN7EXAMPLE:02236Q3V0RonhpaBX5sCYVf1bNRuU=')]
+        # opener.addheaders = [('Authorization', 'AWS AKIAIOSFODNN7EXAMPLE:02236Q3V0RonhpaBX5sCYVf1bNRuU=')]
         reader = opener.open(self.get_image_url)
         return Image.open(BytesIO(reader.read()))
 
@@ -257,6 +257,38 @@ class DBPicture(models.Model):
     mimetype = models.CharField(max_length=50)
 
 
+class SplitTask(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    confidence = models.FloatField(u'置信度', default=1, db_index=True)
+    owner = models.ForeignKey(User, null=True, blank=True, default=None)
+    locked = models.SmallIntegerField(verbose_name=u'锁定状态', default=0, db_index=True)
+    groups = []
+
+    class Meta:
+        ordering = ('confidence', )
+
+    @classmethod
+    def assign(cls, user):
+        pass
+
+    @classmethod
+    def create_tasks(cls, base_confidence, block_size=50):
+        for rect in Rect.objects.filter(split_task=None,
+                                        confidence__lte=base_confidence).order_by('confidence'):
+            SplitTask.create_split_task_group(rect, block_size)
+
+    @classmethod
+    def create_split_task_group(cls, rect, block_size):
+        SplitTask.groups.append(rect)
+        groups = SplitTask.groups
+        if len(groups) == block_size:
+            average = sum([x.confidence for x in groups]) / len(groups)
+            split_task = SplitTask.objects.create(confidence=average)
+            ids = list(map(lambda x: x.id, groups))
+            Rect.objects.filter(id__in=ids).update(split_task=split_task)
+            SplitTask.groups.clear()
+
+
 @iterable
 class Rect(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -272,6 +304,8 @@ class Rect(models.Model):
     op = models.PositiveSmallIntegerField(u'类型', default=RectStatus.INIT, db_index=True)
     hans = models.CharField(u'汉字', max_length=4, default='')
     page = models.ForeignKey(Page, blank=True, null=True, on_delete=models.CASCADE, related_name="rects")
+    split_task = models.ForeignKey(SplitTask, blank=True, null=True, on_delete=models.CASCADE,
+                                   related_name="rects")
     inset = models.FileField(null=True, blank=True, help_text=u'嵌入临时截图',
                              upload_to='core.DBPicture/bytes/filename/mimetype',
                              storage=db_storage)
@@ -282,6 +316,7 @@ class Rect(models.Model):
         indexes = [
             models.Index(fields=['page', 'line_no']),
         ]
+        ordering = ('-confidence', )
 
     def feed_image2DB(self, image):
         buffer = BytesIO()
@@ -306,6 +341,13 @@ class Rect(models.Model):
         # if not self.inset:
         #     image = self.page._remote_image_stream()
         #     self.feed_image2DB(image)
+        return "/files/get/?name=core.DBPicture/bytes/filename/mimetype/%s.png" % self.id
+
+    @property
+    def inset_datauri(self):
+        if not self.inset:
+            image = self.page._remote_image_stream()
+            self.feed_image2DB(image)
         return "/files/get/?name=core.DBPicture/bytes/filename/mimetype/%s.png" % self.id
 
 

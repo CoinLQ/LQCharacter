@@ -36,3 +36,10 @@ class RectSerializer(serializers.ModelSerializer):
         model = Rect
         fields = ['id', 'line_no', 'col_no', 'x', 'y', 'width', 'height', 'confidence',
                   'op', 'hans', 'inset_uri', 'page_id']
+
+
+class SplitRectSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rect
+        fields = ['id', 'line_no', 'col_no', 'x', 'y', 'width', 'height', 'confidence',
+                  'op', 'hans', 'inset_datauri', 'page_id']
