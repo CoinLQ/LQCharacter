@@ -1,0 +1,166 @@
+body{
+	background:#eee;
+}
+.header{
+	width: 100%;
+	height:80px;
+	background-color:#1f262d;
+	line-height: 80px;
+	text-align: center;
+}
+.header h1 img{
+	margin-top: 20px;
+}
+.main{
+	padding: 100px 0;
+}
+.form{
+	width: 780px;
+	background-color: #fff;
+	padding:74px 110px 0 110px;
+	position: relative;
+	box-shadow: 0 0 20px rgba(0,0,0,0.07);
+	border-radius:10px;
+}
+.form .hd{
+	position: relative;
+	height: 33px;
+	padding-bottom: 40px;
+}
+.form h3{
+	text-align: center;
+}
+.form .l{
+	position: absolute;
+	left:0;
+	top:16px;
+}
+.form .r{
+	position: absolute;
+	right:0;
+	top:16px;
+}
+.form .item{
+	padding-left: 73px;
+	position: relative;
+	padding-bottom: 40px;
+	position: relative;
+}
+span.title {
+	height-line:39px;
+	font-size: 26px;
+	color: white;
+	margin-left: 10px;
+}
+.register button > img, .reset button > img {
+	position: relative;
+  top: -19px;
+  right: 24px;
+}
+.form .item:first-child:before{
+	content:"";
+	position: absolute;
+	left:0;
+	top:17px;
+	width: 28px;
+	height:28px;
+	background:url(/static/images/registration/user-v1.png) no-repeat;
+}
+.form .item:nth-child(2):before{
+	content:"";
+	position: absolute;
+	left:0;
+	top:26px;
+	width: 26px;
+	height:21px;
+	background:url(/static/images/registration/email-v1.png) no-repeat;
+}
+.login .item:nth-child(2):before{
+	width: 21px;
+	height:26px;
+	background:url(/static/images/registration/pass-v1.png) no-repeat;
+}
+.reset .item:nth-child(2):before{
+	content:"";
+	position: absolute;
+	left:0;
+	top:21px;
+	width: 30px;
+	height:28px;
+	background:url(/static/images/registration/verifycode-v11.png) no-repeat;
+}
+.form .item:nth-child(3):before{
+	content:"";
+	position: absolute;
+	left:0;
+	top:23px;
+	width: 21px;
+	height:26px;
+	background:url(/static/images/registration/pass-v1.png) no-repeat;
+}
+.form .item:nth-child(4):before{
+	content:"";
+	position: absolute;
+	left:0;
+	top:17px;
+	width: 25px;
+	height:19px;
+	background:url(/static/images/registration/selected-v1.png) no-repeat;
+}
+.form .item input[type="text"], .form .item input[type="email"], .form .item input[type="password"]{
+	width: 100%;
+	box-sizing:border-box;
+	border:0;
+	border-bottom: 4px solid #27a9e3;
+	line-height: 50px;
+	font-size:18px;
+	font-family:Microsoft YaHei;
+	font-weight:400;
+}
+.item p{
+	line-height: 50px;
+}
+.item span{
+	display:inline-block;
+	color:#ccc;
+	font-size:18px;
+	font-weight:400;
+}
+.item span em{
+	color:#27a9e3;
+	cursor: pointer;
+}
+.form .btn{
+	position: absolute;
+  width: 100px;
+  height: 100px;
+  top: 50%;
+  right: -52px;
+  margin-top: -52px;
+  cursor: pointer;
+  border-radius: 50px;
+  border: none;
+	cursor: pointer;
+}
+.form .btn:focus{
+	outline:0;
+	opacity: 0.9;
+}
+.login form img {
+	right: 26px;
+  position: relative;
+  top: -18px;
+}
+.item .rember{
+	cursor: pointer;
+}
+.item .forget,.item .send,.item .hidden{
+	position: absolute;
+	right:0;
+	top:15px;
+	color: #ccc;
+	cursor: pointer;
+}
+.item .hidden{
+	top:20px;
+}

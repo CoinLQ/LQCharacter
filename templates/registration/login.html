@@ -1,33 +1,32 @@
-{% extends 'registration/base_form.html' %}
-{% load material_form %}
-{% load i18n %}
+{% extends 'registration/base.html' %}
+{% block title %} 登录 {% endblock %}
 
-{% block extrahead %}
-<style type="text/css">
-    {{ form.css }}
-</style>
-{% endblock %}
-
-{% block formclass %}{{ form.blockclass|default:"col s12 m8 offset-m2 l8 offset-l2" }}{% endblock %}
-
-{% block formtitle %}
-    {% load static %}
-    <img src="{% static 'images/favicon.ico' %}"/>
-    {% trans 'Log in' %}
-{% endblock %}
-
-{% block formbody %}
+{% block content %}
+  <div class="form login">
+   <div class="hd">
+      <img class="l" src="/static/images/registration/lline-v1.png" alt="">
+      <h3><img src="/static/images/registration/title-v1.png" alt=""></h3>
+      <img class="r" src="/static/images/registration/rline-v1.png" alt="">
+  </div>
+   <form method="POST" enctype="multipart/form-data" class="viewform">
     {% csrf_token %}
-    {% include form.template %}
-    {% comment %}{% form %}
-        {% part form.username prefix %}<i class="material-icons prefix">account_box</i>{% endpart %}
-        {% part form.password prefix %}<i class="material-icons prefix">lock</i>{% endpart %}
-        {% attr form.keep_logged 'group' class append %}right-align{% endattr %}
-    {% endform %}{% endcomment %}
+        <div class="bd">
+          <div class="item">
+            <input id="id_username" name="username"   maxlength="254"  autofocus="" type="text" placeholder="请输入您的用户名">
+          </div>
+          <div class="item">
+            <input id="id_password" name="password" type="password" placeholder="请输入您的密码">
+            <span class="forget">忘记密码?</span>
+          </div>
+          <div class="item clearfix">
+             <input class="filled-in" id="id_keep_logged" name="keep_logged" type="checkbox"><span class="fl rember">保持登录</span>
+            <p><span class="fr">还没账号?&nbsp;点我<a href="/accounts/register"><em>注册</em></a></span></p>
+          </div>
+        </div>
+        <button class="btn" type="submit"><img src="/static/images/registration/btn-v1.png" alt=""></button>
+      </div>
+    </form>
+</div>
+{% block result %}
 {% endblock %}
-
-{% block formbuttons %}
-    {% comment %}<a class="waves-effect waves-light btn-flat" href="/accounts/register">{% trans 'Register' %}</a>
-    <button class="waves-effect waves-light btn" type="submit">{% trans 'Log in' %}</button>{% endcomment %}
-    {% include form.buttons %}
 {% endblock %}

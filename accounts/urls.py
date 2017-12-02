@@ -19,7 +19,6 @@ from .views import UserProfileChange
 
 urlpatterns = [
     url(r'^register/$',
-        # views.RegistrationView.as_view(),
         ExRegistrationView.as_view(),
         name='registration_register'),
     url(r'^register/closed/$',
