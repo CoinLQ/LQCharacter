@@ -4,16 +4,12 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}Material Design for Django Forms and Admin{% endblock %}</title>
+    <title>{% block title %}切分系统{% endblock %}</title>
 
     {% block head %}
-    {% include 'material/includes/material_css.html' %}
-
+    <link rel="stylesheet" href="/static/css/registration/base.css">
+    <link rel="stylesheet" href="/static/css/registration/user.css">
     <style type="text/css">
-      html, body {
-          background: #eee;
-          height: 100%;
-      }
       form .help-block {
         display: none;
       }
@@ -21,11 +17,15 @@
     {% block extrahead %}{% endblock %}
     {% endblock %}
   </head>
-  <body class="valign-wrapper2">
-      {% block sidebar %}{% endblock %}
-      <div class="{% block container_class %}container expand-on-small-only{% endblock %}">
+  <body>
+  <div class="wrapper">
+    <div class="header">
+      <h1><img style="height: 39px" src="/static/images/favicon.png" alt=""><span class="title" >切分系统</span></h1>
+    </div>
+    <div class="main w">
           {% block content %}{% endblock %}
-      </div>
+    </div>
+  </div>
       {% block js %}
       <script src="{% static 'material/js/jquery.js' %}"></script>
       {% include 'material/includes/material_js.html' %}

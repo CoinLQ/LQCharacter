@@ -19,7 +19,6 @@ from accounts.forms import ExRegistrationView, ExAuthenticationForm, ExPasswordC
 
 urlpatterns = [
     url(r'^register/$',
-        # views.RegistrationView.as_view(),
         ExRegistrationView.as_view(),
         name='registration_register'),
     url(r'^register/closed/$',
