@@ -33,4 +33,6 @@ codecov==2.0.9
 
 django-template-debug
 django-material
-django-celery
+celery==4.1.0
+django-celery-beat==1.1.0
+django-celery-results==1.0.1

@@ -37,7 +37,15 @@ DEBUG = True
 ALLOWED_HOSTS = ['*', ]
 
 SITE_ID = 1
+
 # Application definition
+# Internationalization
+# https://docs.djangoproject.com/en/1.11/topics/i18n/
+# Local time zone for this installation. Choices can be found here:
+# http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
+# although not all choices may be available on all operating systems.
+# In a Windows environment this must be set to your system time zone.
+TIME_ZONE = 'Asia/Shanghai'  # 'UTC'
 
 INSTALLED_APPS = [
     'django.contrib.sites',
@@ -57,7 +65,10 @@ INSTALLED_APPS = [
     'xadmin',
     'crispy_forms',
     'reversion',
-    'storages'
+    'storages',
+    'celery',
+    'django_celery_beat',
+
 ]
 
 MIDDLEWARE = [
@@ -72,6 +83,9 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'lqcharacter.urls'
+
+CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 
 TEMPLATES = [
     {
@@ -159,14 +173,6 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator', }
 ]
 
-
-# Internationalization
-# https://docs.djangoproject.com/en/1.11/topics/i18n/
-# Local time zone for this installation. Choices can be found here:
-# http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
-# although not all choices may be available on all operating systems.
-# In a Windows environment this must be set to your system time zone.
-TIME_ZONE = 'Asia/Shanghai'  # 'UTC'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
