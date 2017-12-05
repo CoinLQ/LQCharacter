@@ -100,3 +100,4 @@ core/migrations
 .docker-data/
 .idea/*
 celerybeat-schedule.db
+celerybeat.pid
