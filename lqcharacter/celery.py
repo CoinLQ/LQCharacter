@@ -12,6 +12,11 @@ app = Celery('lqcharacter', broker='redis://localhost:6379/0')
 # the configuration object to child processes.
 # - namespace='CELERY' means all celery-related configuration keys
 #   should have a `CELERY_` prefix.
+# USE_TZ = True
+# TIME_ZONE = 'Europe/Moscow'
+
+CELERY_ENABLE_UTC = True
+
 app.config_from_object('django.conf:settings', namespace='CELERY')
 
 app.conf.update(
@@ -19,14 +24,7 @@ app.conf.update(
     accept_content=['application/json'],  # Ignore other content
     result_serializer='json',
     timezone='Asia/Shanghai',
-    enable_utc=True,
-    beat_schedule={
-        'actualizar_partidos': {
-            'task': 'aguante.tasks.actualizar_partidos',
-            # Cada minuto entre las 12pm y las 1am
-            'schedule': crontab(minute='*', hour='11-23,0'),
-        },
-    },
+    enable_utc=False,
 )
 
 # Load task modules from all registered Django app configs.
@@ -35,17 +33,18 @@ app.autodiscover_tasks()
 
 @app.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
-    # Calls test('hello') every 10 seconds.
-    sender.add_periodic_task(10.0, test.s('hello'), name='add every 10')
+    # Calls test('every_minute') every 60 seconds.
+    sender.add_periodic_task(60.0, every_minute.s(), name='add every minute')
+
+    # Executes every day at 1:02 a.m.
+    sender.add_periodic_task(
+        crontab(hour='1', minute='02', day_of_week="*"),
+        every_morning.s(), name='good morning')
 
     # Calls test('world') every 30 seconds
-    sender.add_periodic_task(30.0, test.s('world'), expires=10)
+    # sender.add_periodic_task(10.0, test.s(''), expires=10)
 
-    # Executes every Monday morning at 7:30 a.m.
-    sender.add_periodic_task(
-        crontab(hour=11, minute=4, day_of_week="sunday"),
-        test.s('Happy Mondays!'),
-    )
+
 
 
 @app.task(bind=True)
@@ -53,8 +52,14 @@ def debug_task(self):
     print('Request: {0!r}'.format(self.request))
 
 @app.task
-def hello():
-    return 'hello world'
+def every_morning():
+    from core.tasks import clean_daily_page
+    clean_daily_page()
+    return 'good morning'
+
+@app.task
+def every_minute():
+    return 'every_minute'
 
 @app.task
 def test(arg):
