@@ -22,7 +22,8 @@ wget https://bootstrap.pypa.io/get-pip.py
 python get-pip.py
 ```
 ```
-pip install virtualenvwrapper
+pip install --ignore-installed six virtualenvwrapper
+source /usr/local/bin/virtualenvwrapper.sh
 mkvirtualenv character --python=python3
 ```
 ### 安装python依赖包
