@@ -2,7 +2,7 @@
 
 {% block content %}
 <div id="task" class="section">
-    
+
         <div class="col s12 m9">
             <div class="collection">
               <a href="#!" class="collection-item">待校对区域总数<span class="new badge" data-badge-caption="个">[[rects.length]]</span></a>
@@ -33,8 +33,8 @@
                 </div>
               </div>
         </div>
-    </div>    
-</div>    
+    </div>
+</div>
 {% endblock %}
 
 {% block base_foot_script %}
@@ -80,7 +80,7 @@ window.vv=new Vue({
                 });
                 window.ps.update()
             })})
-            
+
         }, function(error) {
           // error callback
           console.log('Fail，网址或相关错误！\n错误码：' + error.status + "\n结果：" + error.ok);
