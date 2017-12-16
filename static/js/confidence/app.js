@@ -42,7 +42,7 @@ window.vv=new Vue({
           startingTop: '4%', // Starting top style attribute
           endingTop: '10%', // Ending top style attribute
           ready: function(modal, trigger) { // Callback for Modal open. Modal and trigger parameters available.
-            that.$children[0].choice(that.current); 
+            that.$children[0].choice(that.current);
           },
           complete: function() { vv.reload_render_stats(); } // Callback for Modal close
         }
@@ -52,7 +52,7 @@ window.vv=new Vue({
     },
     computed: {
       rects: function() {
-        return _.sortBy(_.filter(this.stats, { op: 0 }), ['confidence']);   
+        return _.sortBy(_.filter(this.stats, { op: 0 }), ['confidence']);
       },
       same_line_rects: function() {
         if (!this.current)
@@ -90,7 +90,7 @@ window.vv=new Vue({
         this.image = image;
       },
       update_embed_img: function(new_image) {
-        this.render_stats = _.map(this.rects, function(rect) { return _.assign({selected: false, embed_inset: getImagePortion(new_image, rect.width, rect.height, rect.x, rect.y, 1)}, rect);});        
+        this.render_stats = _.map(this.rects, function(rect) { return _.assign({selected: false, embed_inset: getImagePortion(new_image, rect.width, rect.height, rect.x, rect.y, 1)}, rect);});
         this.$nextTick(function(){
                 var containerBlog = $("#item-posts");
                 containerBlog.imagesLoaded(function() {
@@ -103,7 +103,7 @@ window.vv=new Vue({
       },
       reload_render_stats: function() {
         this.render_stats = _.filter(this.render_stats, { op: 0 });
-        this.$children[0].unselect();                    
+        this.$children[0].unselect();
       },
       detail_uri: function(rect){
         return "/rects/" + rect.id
@@ -134,9 +134,8 @@ window.vv=new Vue({
       }
     }
   })
-  
+
   $(function() {
-  
-      $('.lt-menu .menu-content').first().find('.m-submenu').first().addClass('m-active');
-  
+      $('.lt-menu .menu-content').first().find('.m-submenu').first().next().addClass('m-active');
+
   });

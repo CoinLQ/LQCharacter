@@ -27,8 +27,8 @@
               </div>
         </div>
     </div>
-        
-</div>    
+
+</div>
 {% endblock %}
 
 {% block base_foot_script %}
@@ -77,7 +77,7 @@ window.vv=new Vue({
 
   $(function() {
     if (final_val == "0") {
-      $('.lt-menu .menu-content').first().find('.m-submenu').first().addClass('m-active');
+      $('.lt-menu .menu-content').first().find('.m-submenu').first().next().next().next().addClass('m-active');
     } else {
       $('.lt-menu .menu-content').first().find('.m-submenu').first().next().addClass('m-active');
     }
