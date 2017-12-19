@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+import datetime
 from django.core.urlresolvers import reverse_lazy
 
 # mysql 数据库
@@ -68,6 +69,7 @@ INSTALLED_APPS = [
     'storages',
     'celery',
     'django_celery_beat',
+    'jwt_auth',
 
 ]
 
@@ -136,7 +138,7 @@ WSGI_APPLICATION = 'lqcharacter.wsgi.application'
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
 DATABASES = {
-    'default1': {
+    'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     },
@@ -150,15 +152,15 @@ DATABASES = {
     #     'OPTIONS': {'charset': 'utf8mb4', 'init_command': 'SET default_storage_engine=InnoDB'}
     # },
     # XianDian
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'lqcharacter',
-        'USER': 'test',
-        'PASSWORD': 'password',
-        'HOST': 'localhost',
-        'PORT': '3306',
-        'OPTIONS': {'charset': 'utf8mb4', 'init_command': 'SET default_storage_engine=InnoDB'}
-    }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': 'lqcharacter',
+    #     'USER': 'test',
+    #     'PASSWORD': 'password',
+    #     'HOST': 'localhost',
+    #     'PORT': '3306',
+    #     'OPTIONS': {'charset': 'utf8mb4', 'init_command': 'SET default_storage_engine=InnoDB'}
+    # }
 }
 
 
@@ -240,7 +242,7 @@ STATICFILES_DIRS = (
 REST_FRAMEWORK = {
     'UNICODE_JSON': False,
     "DEFAULT_RENDERER_CLASSES": (
-        "rest_framework.renderers.BrowsableAPIRenderer",
+        #"rest_framework.renderers.BrowsableAPIRenderer",
         "rest_framework.renderers.JSONRenderer",
     ),
     "DEFAULT_PARSER_CLASSES": (
@@ -252,7 +254,9 @@ REST_FRAMEWORK = {
 
     ),
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework.authentication.SessionAuthentication",
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'jwt_auth.backends.EmailOrMobileAuthBackend',
+        'jwt_auth.backends.JWTAuthentication',
     ),
     "DEFAULT_PAGINATION_CLASS": "core.pagination.StandardPagination",
     "DEFAULT_FILTER_BACKENDS": (
@@ -354,3 +358,11 @@ CONF_EMAIL = {
 
 LOGOUT_REDIRECT_URL = '/'
 LOGIN_REDIRECT_URL = '/'
+
+JWT_AUTH = {
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'jwt_auth.serializers.jwt_response_payload_handler',
+    'JWT_ALLOW_REFRESH': True,
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=30),
+    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=365),
+}
+

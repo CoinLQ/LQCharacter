@@ -19,6 +19,7 @@ from django.conf.urls import url, include
 
 from django.views.static import serve  # 处理静态文件
 import xadmin
+
 # xadmin.autodiscover()
 
 # version模块自动注册需要版本控制的 Model
@@ -35,6 +36,7 @@ urlpatterns = [
     # url(r'^accounts/', include('registration.backends.simple.urls')),
     url(r'^accounts/', include('accounts.urls')),
     url(r'^files/', include('db_file_storage.urls')),
+    url(r'^auth/', include("jwt_auth.urls", namespace="registration")),
 ]
 
 
@@ -60,8 +62,9 @@ handler500 = 'setting.urls.page_error'
 
 if settings.DEBUG:
     # debug_toolbar 插件配置
-    import debug_toolbar
-    urlpatterns.append(url(r'^__debug__/', include(debug_toolbar.urls)))
+    #import debug_toolbar
+    #urlpatterns.append(url(r'^__debug__/', include(debug_toolbar.urls)))
+    pass
 else:
     # 项目部署上线时使用
     from lqcharacter.settings import STATIC_ROOT
